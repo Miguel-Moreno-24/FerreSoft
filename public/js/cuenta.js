@@ -1,94 +1,117 @@
-// Cargar datos del usuario actual
+function showAccountMessage(message, type = "error") {
+  const messageDiv = document.getElementById("message")
+  if (!messageDiv) return
+
+  messageDiv.style.display = "block"
+  messageDiv.style.background = type === "success" ? "#dcfce7" : "#fee2e2"
+  messageDiv.style.color = type === "success" ? "#166534" : "#991b1b"
+  messageDiv.style.border = `1px solid ${type === "success" ? "#86efac" : "#fca5a5"}`
+  messageDiv.textContent = message
+}
+
+function validateAccountForm() {
+  const nombre = document.getElementById("nombre").value.trim()
+  const email = document.getElementById("email").value.trim()
+  const tipoDocumento = document.getElementById("tipo_documento").value.trim()
+  const numeroDocumento = document.getElementById("numero_documento").value.trim()
+  const telefono = document.getElementById("telefono").value.trim()
+
+  if (!nombre) return "Debes ingresar tu nombre"
+  if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s'-]+$/u.test(nombre)) return "El nombre solo puede contener letras y espacios"
+
+  if (!email) return "Debes ingresar un correo electronico"
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Ingresa un correo valido"
+
+  if ((tipoDocumento && !numeroDocumento) || (!tipoDocumento && numeroDocumento)) {
+    return "Debes completar tipo y numero de documento juntos"
+  }
+
+  if (tipoDocumento && !/^[0-9A-Za-z-]{5,20}$/.test(numeroDocumento)) {
+    return "El numero de documento debe tener entre 5 y 20 caracteres validos"
+  }
+
+  if (telefono && !/^\+?[0-9\s-]{7,20}$/.test(telefono)) {
+    return "El telefono debe tener entre 7 y 20 caracteres numericos"
+  }
+
+  return null
+}
+
 async function loadUserData() {
   try {
     const response = await fetch("../controllers/usuario.php?action=get")
     const data = await response.json()
 
-    if (data.success) {
-      const user = data.user
-      document.getElementById("nombre").value = user.nombre || ""
-      document.getElementById("email").value = user.email || ""
-      document.getElementById("telefono").value = user.telefono || ""
-      document.getElementById("ciudad").value = user.ciudad || ""
-      document.getElementById("direccion").value = user.direccion || ""
-      document.getElementById("tipo_documento").value = user.tipo_documento || ""
-      document.getElementById("numero_documento").value = user.numero_documento || ""
-    } else {
+    if (!data.success) {
       showToast(data.message || "Error cargando datos", "error")
-      setTimeout(() => window.location.href = "login.html", 2000)
+      setTimeout(() => {
+        window.location.href = "login.html"
+      }, 1500)
+      return
     }
+
+    const user = data.user
+    document.getElementById("nombre").value = user.nombre || ""
+    document.getElementById("email").value = user.email || ""
+    document.getElementById("telefono").value = user.telefono || ""
+    document.getElementById("ciudad").value = user.ciudad || ""
+    document.getElementById("direccion").value = user.direccion || ""
+    document.getElementById("tipo_documento").value = user.tipo_documento || ""
+    document.getElementById("numero_documento").value = user.numero_documento || ""
   } catch (error) {
     console.log("[v0] Error loading user data:", error)
     showToast("Error al cargar datos", "error")
   }
 }
 
-// Manejar envÃ­o del formulario
-document.getElementById("account-form").addEventListener("submit", async (e) => {
+document.getElementById("account-form")?.addEventListener("submit", async (e) => {
   e.preventDefault()
 
-  const tipoDoc = document.getElementById("tipo_documento").value
-  const numDoc = document.getElementById("numero_documento").value.trim()
-  const messageDiv = document.getElementById("message")
-
-  // Validaciones de dependencia de documentos
-  if (tipoDoc !== "" && numDoc === "") {
-    showToast("Debe ingresar el nÃºmero de documento si seleccionÃ³ un tipo", "error")
-    return
-  }
-  if (numDoc !== "" && tipoDoc === "") {
-    showToast("Debe seleccionar un tipo de documento si ingresÃ³ un nÃºmero", "error")
+  const validationError = validateAccountForm()
+  if (validationError) {
+    showAccountMessage(validationError, "error")
     return
   }
 
-  const formData = new FormData()
-  formData.append("nombre", document.getElementById("nombre").value)
-  formData.append("email", document.getElementById("email").value)
-  formData.append("telefono", document.getElementById("telefono").value)
-  formData.append("ciudad", document.getElementById("ciudad").value)
-  formData.append("direccion", document.getElementById("direccion").value)
-  formData.append("tipo_documento", tipoDoc)
-  formData.append("numero_documento", numDoc)
+  showConfirm("¿Guardar cambios en tu cuenta?", async () => {
+    const formData = new FormData()
+    formData.append("nombre", document.getElementById("nombre").value.trim())
+    formData.append("email", document.getElementById("email").value.trim())
+    formData.append("telefono", document.getElementById("telefono").value.trim())
+    formData.append("ciudad", document.getElementById("ciudad").value.trim())
+    formData.append("direccion", document.getElementById("direccion").value.trim())
+    formData.append("tipo_documento", document.getElementById("tipo_documento").value.trim())
+    formData.append("numero_documento", document.getElementById("numero_documento").value.trim())
 
-  try {
-    const response = await fetch("../controllers/usuario.php?action=update", {
-      method: "POST",
-      body: formData,
-    })
+    try {
+      const response = await fetch("../controllers/usuario.php?action=update", {
+        method: "POST",
+        body: formData,
+      })
 
-    const data = await response.json()
+      const data = await response.json()
 
-    if (data.success) {
-      messageDiv.style.color = "#22c55e"
-      messageDiv.textContent = data.message
-      messageDiv.style.display = "block"
-      
-      // Actualizar currentUser y el nombre en el menÃº
+      if (!data.success) {
+        showAccountMessage(data.message || "No se pudieron guardar los cambios", "error")
+        return
+      }
+
       if (typeof currentUser !== "undefined" && currentUser) {
         currentUser.nombre = data.user.nombre
         currentUser.email = data.user.email
-        
-        const menuNameEl = document.getElementById("user-menu-name")
-        if (menuNameEl) {
-          menuNameEl.textContent = data.user.nombre
-        }
       }
 
-      setTimeout(() => {
-        messageDiv.style.display = "none"
-      }, 3000)
-    } else {
-      messageDiv.style.color = "#ef4444"
-      messageDiv.textContent = data.message
-      messageDiv.style.display = "block"
+      const menuNameEl = document.getElementById("user-menu-name")
+      if (menuNameEl) {
+        menuNameEl.textContent = data.user.nombre
+      }
+
+      showAccountMessage(data.message, "success")
+    } catch (error) {
+      console.log("[v0] Error updating user:", error)
+      showAccountMessage("Error al guardar cambios", "error")
     }
-  } catch (error) {
-    console.log("[v0] Error updating user:", error)
-    const messageDiv = document.getElementById("message")
-    messageDiv.style.color = "#ef4444"
-    messageDiv.textContent = "Error al guardar cambios"
-    messageDiv.style.display = "block"
-  }
+  })
 })
 
 document.addEventListener("DOMContentLoaded", () => {

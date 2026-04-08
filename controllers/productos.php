@@ -79,7 +79,7 @@ function handleUploadedImage(&$imagen, &$errors) {
 
 switch ($action) {
     case 'list':
-        $sql = "SELECT * FROM productos ORDER BY nombre";
+        $sql = "SELECT * FROM productos ORDER BY id ASC";
         $result = mysqli_query($conn, $sql);
         
         if (!$result) {

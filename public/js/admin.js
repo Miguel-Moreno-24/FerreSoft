@@ -1,236 +1,332 @@
+let productosCache = []
+let showRecentFirst = false
+
 async function checkAdminAccess() {
   try {
-    const response = await fetch("../controllers/auth.php?action=check");
-    const data = await response.json();
+    const response = await fetch("../controllers/auth.php?action=check")
+    const data = await response.json()
+
     if (!data.logged_in || String(data.user.rol).toLowerCase() !== "admin") {
-      showToast("Acceso denegado", "error");
-      window.location.href = "login.html";
+      showToast("Acceso denegado", "error")
+      window.location.href = "login.html"
+      return false
     }
+
+    currentUser = data.user
+    applyTheme(data.user.theme_preference || "light")
+    const menuName = document.getElementById("user-menu-name")
+    if (menuName) menuName.textContent = data.user.nombre
+    setupUserMenu()
+    await checkUserSession()
+    return true
   } catch (error) {
-    window.location.href = "login.html";
+    window.location.href = "login.html"
+    return false
   }
 }
 
-// Navegaci贸n entre secciones
-function showSection(sectionId) {
-  document.querySelectorAll(".admin-section").forEach(s => s.classList.remove("active"));
-  document.querySelectorAll(".sidebar-item").forEach(i => i.classList.remove("active"));
-  
-  document.getElementById(`section-${sectionId}`).classList.add("active");
-  const activeItem = Array.from(document.querySelectorAll(".sidebar-item")).find(i => i.textContent.toLowerCase().includes(sectionId.toLowerCase()));
-  if (activeItem) activeItem.classList.add("active");
-
-  // Cargar datos seg煤n la secci贸n
-  if (sectionId === 'dashboard') loadStats();
-  if (sectionId === 'productos') loadProducts();
-  if (sectionId === 'pedidos') loadPedidos();
-  if (sectionId === 'usuarios') loadUsuarios();
+function sortProducts(list) {
+  return [...list].sort((a, b) => (showRecentFirst ? b.id - a.id : a.id - b.id))
 }
 
-// Dashboard Stats
+function getFilteredProducts() {
+  const query = (document.getElementById("productos-search")?.value || "").trim().toLowerCase()
+  const filtered = productosCache.filter((product) => {
+    return [product.nombre, product.descripcion, String(product.id)].some((value) =>
+      String(value || "").toLowerCase().includes(query)
+    )
+  })
+
+  return sortProducts(filtered)
+}
+
+function updateOrderButtonLabel() {
+  const button = document.getElementById("toggle-order-btn")
+  if (!button) return
+  button.textContent = showRecentFirst ? "Ver por ID" : "Ver mas recientes"
+}
+
 async function loadStats() {
   try {
-    const response = await fetch("../controllers/admin_api.php?action=stats");
-    const data = await response.json();
-    if (data.success) {
-      document.getElementById("stat-productos").textContent = data.stats.productos;
-      document.getElementById("stat-usuarios").textContent = data.stats.usuarios;
-      document.getElementById("stat-pedidos").textContent = data.stats.pedidos;
-    }
-  } catch (error) { console.error("Error stats:", error); }
+    const response = await fetch("../controllers/admin_api.php?action=stats")
+    const data = await response.json()
+    if (!data.success) return
+
+    document.getElementById("stat-productos").textContent = data.stats.productos
+    document.getElementById("stat-usuarios").textContent = data.stats.usuarios
+    document.getElementById("stat-pedidos").textContent = data.stats.pedidos
+  } catch (error) {
+    console.error("Error stats:", error)
+  }
 }
 
-// Gesti贸n de Productos
-let productosCache = [];
 async function loadProducts() {
-  const tbody = document.getElementById("productos-table");
-  tbody.innerHTML = '<tr><td colspan="6" class="loading">Cargando...</td></tr>';
+  const tbody = document.getElementById("productos-table")
+  tbody.innerHTML = '<tr><td colspan="7" class="loading">Cargando...</td></tr>'
+
   try {
-    const response = await fetch("../controllers/productos.php?action=list");
-    const productos = await response.json();
-    productosCache = productos;
-    renderProducts(productos);
-  } catch (error) { console.error("Error products:", error); }
+    const response = await fetch("../controllers/productos.php?action=list")
+    const productos = await response.json()
+    productosCache = Array.isArray(productos) ? productos : []
+    renderProducts(getFilteredProducts())
+  } catch (error) {
+    console.error("Error products:", error)
+    tbody.innerHTML = '<tr><td colspan="7" class="loading">No se pudieron cargar los productos.</td></tr>'
+  }
 }
 
 function renderProducts(list) {
-  const tbody = document.getElementById("productos-table");
-  tbody.innerHTML = "";
-  list.forEach(p => {
-    const tr = document.createElement("tr");
+  const tbody = document.getElementById("productos-table")
+  tbody.innerHTML = ""
+
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="loading">No se encontraron productos.</td></tr>'
+    return
+  }
+
+  list.forEach((p) => {
+    const tr = document.createElement("tr")
     tr.innerHTML = `
       <td>${p.id}</td>
-      <td><img src="${resolveImagePath(p.imagen)}" style="width:50px; height:50px; object-fit:cover;"></td>
+      <td><img src="${resolveImagePath(p.imagen)}" class="admin-product-thumb" alt="${p.nombre}"></td>
       <td>${p.nombre}</td>
+      <td>${p.descripcion || "-"}</td>
       <td>$${Number(p.precio).toFixed(2)}</td>
       <td>${p.stock}</td>
       <td>
-        <button class="btn btn-success" style="padding:0.4rem; margin-right:0.2rem;" onclick="editProduct(${p.id})">Editar</button>
-        <button class="btn btn-danger" style="padding:0.4rem;" onclick="deleteProduct(${p.id})">Eliminar</button>
+        <div class="admin-table-actions">
+          <button class="btn admin-secondary-btn admin-inline-btn" onclick="editProduct(${p.id})">Editar</button>
+          <button class="btn btn-danger admin-inline-btn" onclick="deleteProduct(${p.id})">Eliminar</button>
+        </div>
       </td>
-    `;
-    tbody.appendChild(tr);
-  });
+    `
+    tbody.appendChild(tr)
+  })
 }
 
-// Gesti贸n de Pedidos
-async function loadPedidos() {
-  const tbody = document.getElementById("pedidos-table");
-  tbody.innerHTML = '<tr><td colspan="6" class="loading">Cargando...</td></tr>';
-  try {
-    const response = await fetch("../controllers/admin_api.php?action=list_pedidos");
-    const data = await response.json();
-    if (data.success) {
-      tbody.innerHTML = "";
-      data.pedidos.forEach(p => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>#${p.id}</td>
-          <td>${p.usuario_nombre}<br><small>${p.usuario_email}</small></td>
-          <td>${p.resumen_productos}</td>
-          <td>$${Number(p.total).toFixed(2)}</td>
-          <td>
-            <select onchange="updatePedidoEstado(${p.id}, this.value)" class="estado-select">
-              <option value="Pendiente" ${p.estado === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
-              <option value="Enviado" ${p.estado === 'Enviado' ? 'selected' : ''}>Enviado</option>
-              <option value="Entregado" ${p.estado === 'Entregado' ? 'selected' : ''}>Entregado</option>
-            </select>
-          </td>
-          <td>${new Date(p.fecha_pedido).toLocaleDateString()}</td>
-        `;
-        tbody.appendChild(tr);
-      });
+function toggleRecentOrder() {
+  showRecentFirst = !showRecentFirst
+  updateOrderButtonLabel()
+  renderProducts(getFilteredProducts())
+}
+
+async function resetCounters() {
+  showConfirm("縍einiciar contadores vacios de productos y usuarios?", async () => {
+    try {
+      const response = await fetch("../controllers/productos.php?action=reset_ids", { method: "POST" })
+      const data = await response.json()
+      if (!data.success) {
+        showToast(data.message || "No se pudo reiniciar", "error")
+        return
+      }
+
+      showToast(data.message || "Contadores revisados", "success")
+      loadStats()
+      loadProducts()
+    } catch (error) {
+      console.error("Error reset counters:", error)
+      showToast("Error al reiniciar contadores", "error")
     }
-  } catch (error) { console.error("Error pedidos:", error); }
+  })
+}
+
+async function loadPedidos() {
+  const tbody = document.getElementById("pedidos-table")
+  tbody.innerHTML = '<tr><td colspan="6" class="loading">Cargando...</td></tr>'
+
+  try {
+    const response = await fetch("../controllers/admin_api.php?action=list_pedidos")
+    const data = await response.json()
+    if (!data.success) return
+
+    tbody.innerHTML = ""
+    data.pedidos.forEach((pedido) => {
+      const tr = document.createElement("tr")
+      tr.innerHTML = `
+        <td>#${pedido.id}</td>
+        <td>${pedido.usuario_nombre}<br><small>${pedido.usuario_email}</small></td>
+        <td>${pedido.resumen_productos}</td>
+        <td>$${Number(pedido.total).toFixed(2)}</td>
+        <td>
+          <select onchange="updatePedidoEstado(${pedido.id}, this.value)" class="estado-select">
+            <option value="Pendiente" ${pedido.estado === "Pendiente" ? "selected" : ""}>Pendiente</option>
+            <option value="Enviado" ${pedido.estado === "Enviado" ? "selected" : ""}>Enviado</option>
+            <option value="Entregado" ${pedido.estado === "Entregado" ? "selected" : ""}>Entregado</option>
+          </select>
+        </td>
+        <td>${new Date(pedido.fecha_pedido).toLocaleDateString()}</td>
+      `
+      tbody.appendChild(tr)
+    })
+  } catch (error) {
+    console.error("Error pedidos:", error)
+  }
 }
 
 async function updatePedidoEstado(id, estado) {
-  const formData = new FormData();
-  formData.append("id", id);
-  formData.append("estado", estado);
+  const formData = new FormData()
+  formData.append("id", id)
+  formData.append("estado", estado)
+
   try {
     const response = await fetch("../controllers/admin_api.php?action=update_pedido", {
       method: "POST",
-      body: formData
-    });
-    const data = await response.json();
-    if (data.success) showToast(data.message);
-  } catch (error) { showToast("Error al actualizar", "error"); }
+      body: formData,
+    })
+    const data = await response.json()
+    if (data.success) showToast(data.message)
+  } catch (error) {
+    showToast("Error al actualizar", "error")
+  }
 }
 
-// Gesti贸n de Usuarios
 async function loadUsuarios() {
-  const tbody = document.getElementById("usuarios-table");
-  tbody.innerHTML = '<tr><td colspan="6" class="loading">Cargando...</td></tr>';
+  const tbody = document.getElementById("usuarios-table")
+  tbody.innerHTML = '<tr><td colspan="6" class="loading">Cargando...</td></tr>'
+
   try {
-    const response = await fetch("../controllers/admin_api.php?action=list_usuarios");
-    const data = await response.json();
-    if (data.success) {
-      tbody.innerHTML = "";
-      data.usuarios.forEach(u => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${u.id}</td>
-          <td>${u.nombre}</td>
-          <td>${u.email}</td>
-          <td>${u.rol}</td>
-          <td>${new Date(u.fecha_registro).toLocaleDateString()}</td>
-          <td>
-            <button class="btn btn-danger" style="padding:0.4rem;" onclick="deleteUsuario(${u.id})">Eliminar</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-  } catch (error) { console.error("Error users:", error); }
+    const response = await fetch("../controllers/admin_api.php?action=list_usuarios")
+    const data = await response.json()
+    if (!data.success) return
+
+    tbody.innerHTML = ""
+    data.usuarios.forEach((user) => {
+      const tr = document.createElement("tr")
+      tr.innerHTML = `
+        <td>${user.id}</td>
+        <td>${user.nombre}</td>
+        <td>${user.email}</td>
+        <td>${user.rol}</td>
+        <td>${new Date(user.fecha_registro).toLocaleDateString()}</td>
+        <td><button class="btn btn-danger admin-inline-btn" onclick="deleteUsuario(${user.id})">Eliminar</button></td>
+      `
+      tbody.appendChild(tr)
+    })
+  } catch (error) {
+    console.error("Error users:", error)
+  }
 }
 
 async function deleteUsuario(id) {
-  showConfirm("驴Seguro que deseas eliminar este usuario?", async () => {
-    const formData = new FormData();
-    formData.append("id", id);
+  showConfirm("縎eguro que deseas eliminar este usuario?", async () => {
+    const formData = new FormData()
+    formData.append("id", id)
+
     try {
       const response = await fetch("../controllers/admin_api.php?action=delete_usuario", {
         method: "POST",
-        body: formData
-      });
-      const data = await response.json();
-      if (data.success) {
-        showToast(data.message);
-        loadUsuarios();
-      } else {
-        showToast(data.message, "error");
+        body: formData,
+      })
+      const data = await response.json()
+      if (!data.success) {
+        showToast(data.message, "error")
+        return
       }
-    } catch (error) { showToast("Error al eliminar", "error"); }
-  });
+
+      showToast(data.message)
+      loadUsuarios()
+      loadStats()
+    } catch (error) {
+      showToast("Error al eliminar", "error")
+    }
+  })
 }
 
-// Helpers CRUD Productos (manteniendo l贸gica previa adaptada)
 function openModal(producto = null) {
-  const modal = document.getElementById("producto-modal");
-  const form = document.getElementById("producto-form");
+  const modal = document.getElementById("producto-modal")
+  const form = document.getElementById("producto-form")
+
   if (producto) {
-    document.getElementById("modal-title").textContent = "Editar Producto";
-    document.getElementById("producto-id").value = producto.id;
-    document.getElementById("producto-nombre").value = producto.nombre;
-    document.getElementById("producto-descripcion").value = producto.descripcion;
-    document.getElementById("producto-precio").value = producto.precio;
-    document.getElementById("producto-stock").value = producto.stock;
-    document.getElementById("producto-imagen").value = producto.imagen;
+    document.getElementById("modal-title").textContent = "Editar Producto"
+    document.getElementById("producto-id").value = producto.id
+    document.getElementById("producto-nombre").value = producto.nombre
+    document.getElementById("producto-descripcion").value = producto.descripcion
+    document.getElementById("producto-precio").value = producto.precio
+    document.getElementById("producto-stock").value = producto.stock
+    document.getElementById("producto-imagen").value = producto.imagen
   } else {
-    document.getElementById("modal-title").textContent = "Agregar Producto";
-    form.reset();
-    document.getElementById("producto-id").value = "";
+    document.getElementById("modal-title").textContent = "Agregar Producto"
+    form.reset()
+    document.getElementById("producto-id").value = ""
   }
-  modal.classList.add("active");
+
+  modal.classList.add("active")
 }
 
 function closeModal() {
-  document.getElementById("producto-modal").classList.remove("active");
+  document.getElementById("producto-modal").classList.remove("active")
 }
 
-async function editProduct(id) {
-  const p = productosCache.find(item => item.id == id);
-  if (p) openModal(p);
+function editProduct(id) {
+  const product = productosCache.find((item) => item.id == id)
+  if (product) openModal(product)
 }
 
 async function deleteProduct(id) {
-  showConfirm("驴Seguro que deseas eliminar este producto?", async () => {
-    const formData = new FormData();
-    formData.append("id", id);
+  showConfirm("縎eguro que deseas eliminar este producto?", async () => {
+    const formData = new FormData()
+    formData.append("id", id)
+
     try {
-      const response = await fetch("../controllers/productos.php?action=delete", { method: "POST", body: formData });
-      const data = await response.json();
-      if (data.success) { showToast("Eliminado"); loadProducts(); }
-    } catch (error) { console.error("Error delete:", error); }
-  });
+      const response = await fetch("../controllers/productos.php?action=delete", {
+        method: "POST",
+        body: formData,
+      })
+      const data = await response.json()
+      if (!data.success) {
+        showToast(data.message || "No se pudo eliminar", "error")
+        return
+      }
+
+      showToast("Producto eliminado")
+      loadProducts()
+      loadStats()
+    } catch (error) {
+      console.error("Error delete:", error)
+    }
+  })
 }
 
-document.getElementById("producto-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const id = document.getElementById("producto-id").value;
-  const formData = new FormData(e.target);
-  if (id) formData.append("id", id);
-  const action = id ? "update" : "add";
-  try {
-    const response = await fetch(`../controllers/productos.php?action=${action}`, { method: "POST", body: formData });
-    const data = await response.json();
-    if (data.success) { showToast(data.message); closeModal(); loadProducts(); }
-    else { showToast(data.message, "error"); }
-  } catch (error) { console.error("Error save:", error); }
-});
+document.getElementById("producto-form")?.addEventListener("submit", async (e) => {
+  e.preventDefault()
+  const id = document.getElementById("producto-id").value
+  const formData = new FormData(e.target)
+  if (id) formData.append("id", id)
 
-// Inicializaci贸n
-document.addEventListener("DOMContentLoaded", () => {
-  checkAdminAccess();
-  loadStats();
-  
-  const searchInput = document.getElementById("productos-search");
-  if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-      const q = e.target.value.toLowerCase();
-      const filtered = productosCache.filter(p => p.nombre.toLowerCase().includes(q));
-      renderProducts(filtered);
-    });
+  try {
+    const action = id ? "update" : "add"
+    const response = await fetch(`../controllers/productos.php?action=${action}`, {
+      method: "POST",
+      body: formData,
+    })
+    const data = await response.json()
+
+    if (!data.success) {
+      showToast(data.message, "error")
+      return
+    }
+
+    showToast(data.message)
+    closeModal()
+    loadProducts()
+    loadStats()
+  } catch (error) {
+    console.error("Error save:", error)
   }
-});
+})
+
+document.addEventListener("DOMContentLoaded", async () => {
+  updateOrderButtonLabel()
+
+  const isAdmin = await checkAdminAccess()
+  if (!isAdmin) return
+
+  document.getElementById("productos-search")?.addEventListener("input", () => {
+    renderProducts(getFilteredProducts())
+  })
+
+  loadStats()
+  loadProducts()
+  loadPedidos()
+  loadUsuarios()
+})

@@ -3,218 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admin - FerreSoft</title>
+    <title>Panel de Administracion - FerreSoft</title>
     <link rel="stylesheet" href="../public/css/styles.css">
-    <style>
-        body { display: flex; min-height: 100vh; flex-direction: column; }
-        .admin-layout { display: flex; flex: 1; }
-        
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background: #2c3e50;
-            color: white;
-            padding-top: 2rem;
-            transition: width 0.3s;
-        }
-        .sidebar-menu { list-style: none; padding: 0; }
-        .sidebar-item {
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            transition: background 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-        .sidebar-item:hover, .sidebar-item.active { background: #34495e; border-left: 4px solid #3498db; }
-        
-        /* Content Area */
-        .admin-main { flex: 1; padding: 2rem; background: var(--bg-color); }
-        .admin-section { display: none; }
-        .admin-section.active { display: block; }
-
-        /* Dashboard Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .stat-card {
-            background: var(--container-bg);
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px var(--shadow-color);
-            text-align: center;
-        }
-        .stat-card h4 { color: #7f8c8d; margin-bottom: 0.5rem; }
-        .stat-card .value { font-size: 2rem; font-weight: bold; color: #3498db; }
-
-        /* Tables and Utils */
-        .admin-table-container {
-            background: var(--container-bg);
-            border-radius: 10px;
-            padding: 1rem;
-            box-shadow: 0 2px 8px var(--shadow-color);
-            overflow-x: auto;
-        }
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color); color: var(--text-color); }
-        th { background: #34495e; color: white; }
-        .admin-header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    </style>
 </head>
 <body>
-    <div class="admin-header" style="background: #1a252f; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; color: white;">
-        <h1>Panel de Administración</h1>
-        <div style="display: flex; align-items: center; gap: 1rem;">
-            <a href="index.html" style="color: white; text-decoration: none;">Ver Tienda</a>
-            <div class="user-menu-wrapper">
-                <button id="user-menu-btn" class="user-menu-btn">
-                    <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                    <span id="user-menu-name">Admin</span>
-                </button>
-                <div id="user-menu" class="user-menu hidden"></div>
+    <header class="admin-page-header">
+        <div class="navbar admin-navbar">
+            <h1>Panel de Administracion - FerreSoft</h1>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link-light admin-top-link">Ver Tienda</a>
+                <div class="user-menu-wrapper">
+                    <button id="user-menu-btn" class="user-menu-btn">
+                        <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span id="user-menu-name">Admin</span>
+                    </button>
+                    <div id="user-menu" class="user-menu hidden"></div>
+                </div>
             </div>
         </div>
-    </div>
+    </header>
 
-    <div class="admin-layout">
-        <aside class="sidebar">
-            <ul class="sidebar-menu">
-                <li class="sidebar-item active" onclick="showSection('dashboard')">Panel Resumen</li>
-                <li class="sidebar-item" onclick="showSection('productos')">Productos</li>
-                <li class="sidebar-item" onclick="showSection('pedidos')">Pedidos</li>
-                <li class="sidebar-item" onclick="showSection('usuarios')">Usuarios</li>
-            </ul>
-        </aside>
+    <main class="container admin-page-shell">
+        <section class="admin-overview-card">
+            <h2>Resumen del sistema</h2>
+            <div class="stats-grid">
+                <article class="stat-card">
+                    <h4>Productos</h4>
+                    <div class="value" id="stat-productos">0</div>
+                </article>
+                <article class="stat-card">
+                    <h4>Usuarios</h4>
+                    <div class="value" id="stat-usuarios">0</div>
+                </article>
+                <article class="stat-card">
+                    <h4>Pedidos</h4>
+                    <div class="value" id="stat-pedidos">0</div>
+                </article>
+            </div>
+        </section>
 
-        <main class="admin-main">
-            <!-- Sección Dashboard -->
-            <section id="section-dashboard" class="admin-section active">
-                <h2>Resumen del Sistema</h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4>Productos</h4>
-                        <div class="value" id="stat-productos">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Usuarios</h4>
-                        <div class="value" id="stat-usuarios">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Pedidos</h4>
-                        <div class="value" id="stat-pedidos">0</div>
-                    </div>
+        <section class="admin-section-card">
+            <div class="admin-section-heading">
+                <div>
+                    <h2>Gestion de Productos</h2>
+                    <p>Administra el catalogo manteniendo el orden por identificacion y acciones claras.</p>
                 </div>
-            </section>
+            </div>
+            <div class="admin-toolbar">
+                <button class="btn btn-success admin-action-btn" onclick="openModal()">Agregar Producto</button>
+                <button class="btn admin-action-btn admin-secondary-btn" onclick="resetCounters()">Reiniciar contadores</button>
+                <input type="text" id="productos-search" class="admin-search" placeholder="Buscar producto...">
+                <button class="btn admin-action-btn admin-secondary-btn" id="toggle-order-btn" onclick="toggleRecentOrder()">Ver mas recientes</button>
+            </div>
+            <div class="admin-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Imagen</th>
+                            <th>Nombre</th>
+                            <th>Descripcion</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productos-table">
+                        <tr><td colspan="7" class="loading">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-            <!-- Sección Productos (CRUD actual) -->
-            <section id="section-productos" class="admin-section">
-                <div class="admin-header-actions">
-                    <h2>Gestión de Productos</h2>
-                    <button class="btn btn-success" onclick="openModal()">Agregar Producto</button>
+        <section class="admin-section-card">
+            <div class="admin-section-heading">
+                <div>
+                    <h2>Pedidos</h2>
+                    <p>Seguimiento del estado de compra y detalle por cliente.</p>
                 </div>
-                <div class="admin-table-container">
-                    <input type="text" id="productos-search" placeholder="Buscar producto..." style="margin-bottom: 1rem;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Imagen</th>
-                                <th>Nombre</th>
-                                <th>Precio</th>
-                                <th>Stock</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productos-table">
-                            <tr><td colspan="6" class="loading">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+            </div>
+            <div class="admin-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pedido #</th>
+                            <th>Usuario</th>
+                            <th>Productos</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pedidos-table">
+                        <tr><td colspan="6" class="loading">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-            <!-- Sección Pedidos -->
-            <section id="section-pedidos" class="admin-section">
-                <h2>Gestión de Pedidos</h2>
-                <div class="admin-table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Pedido #</th>
-                                <th>Usuario</th>
-                                <th>Productos</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="pedidos-table">
-                            <tr><td colspan="6" class="loading">Cargando...</td></tr>
-                        </tbody>
-                    </table>
+        <section class="admin-section-card">
+            <div class="admin-section-heading">
+                <div>
+                    <h2>Usuarios</h2>
+                    <p>Consulta usuarios registrados y controla accesos administrativos.</p>
                 </div>
-            </section>
+            </div>
+            <div class="admin-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Registro</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usuarios-table">
+                        <tr><td colspan="6" class="loading">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 
-            <!-- Sección Usuarios -->
-            <section id="section-usuarios" class="admin-section">
-                <h2>Gestión de Usuarios</h2>
-                <div class="admin-table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Rol</th>
-                                <th>Registro</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usuarios-table">
-                            <tr><td colspan="6" class="loading">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- Modal para CRUD Productos -->
     <div id="producto-modal" class="modal">
         <div class="modal-content">
             <h2 id="modal-title">Agregar Producto</h2>
             <form id="producto-form" enctype="multipart/form-data">
                 <input type="hidden" id="producto-id" name="id">
                 <div class="form-group">
-                    <label>Nombre</label>
+                    <label for="producto-nombre">Nombre</label>
                     <input type="text" id="producto-nombre" name="nombre" required>
                 </div>
                 <div class="form-group">
-                    <label>Descripción</label>
+                    <label for="producto-descripcion">Descripcion</label>
                     <textarea id="producto-descripcion" name="descripcion" required></textarea>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Precio</label>
+                        <label for="producto-precio">Precio</label>
                         <input type="number" id="producto-precio" name="precio" step="0.01" required>
                     </div>
                     <div class="form-group">
-                        <label>Stock</label>
+                        <label for="producto-stock">Stock</label>
                         <input type="number" id="producto-stock" name="stock" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Imagen (URL)</label>
+                    <label for="producto-imagen">Imagen (URL)</label>
                     <input type="text" id="producto-imagen" name="imagen">
-                    <p style="font-size: 0.8rem; color: #7f8c8d; margin-top: 0.2rem;">Opcional si subes un archivo.</p>
+                    <p class="admin-field-help">Opcional si subes un archivo.</p>
                 </div>
                 <div class="form-group">
-                    <label>Subir Imagen (Archivo)</label>
+                    <label for="producto-imagen-file">Subir Imagen (Archivo)</label>
                     <input type="file" id="producto-imagen-file" name="imagen_file" accept="image/*">
                 </div>
                 <div class="form-actions">

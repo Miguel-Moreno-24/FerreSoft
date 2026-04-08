@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuración - FerreSoft</title>
+    <title>Configuracion - FerreSoft</title>
     <link rel="stylesheet" href="../public/css/styles.css">
 </head>
 <body>
     <header>
         <div class="navbar">
-            <h1>FerreSoft - Configuración</h1>
+            <h1>FerreSoft - Configuracion</h1>
             <div class="nav-links">
-                <a href="index.html">Volver a la Tienda</a>
+                <a href="index.html" class="nav-link-light">Volver a la Tienda</a>
                 <div class="user-menu-wrapper">
                     <button id="user-menu-btn" class="user-menu-btn">
                         <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -20,9 +20,7 @@
                         </svg>
                         <span id="user-menu-name">Usuario</span>
                     </button>
-                    <div id="user-menu" class="user-menu hidden">
-                        <!-- Se llenará dinámicamente -->
-                    </div>
+                    <div id="user-menu" class="user-menu hidden"></div>
                 </div>
             </div>
         </div>
@@ -30,13 +28,12 @@
 
     <main class="container">
         <div class="config-container">
-            <h2>Configuración</h2>
-            
-            <!-- Sección de Tema -->
+            <h2>Configuracion</h2>
+
             <section class="config-section">
                 <h3>Preferencia de Tema</h3>
                 <div class="theme-switch-wrapper">
-                    <p>Elige el estilo visual de la página:</p>
+                    <p>Elige el estilo visual de la pagina:</p>
                     <div class="theme-options">
                         <label class="theme-option">
                             <input type="radio" name="theme" value="light" checked>
@@ -52,22 +49,21 @@
 
             <hr style="margin: 2rem 0; border: none; border-top: 1px solid #ddd;">
 
-            <!-- Sección de Seguridad -->
             <section class="config-section">
                 <h3>Seguridad</h3>
                 <form id="password-form">
                     <div class="form-group">
-                        <label for="new_password">Nueva Contraseña</label>
-                        <input type="password" id="new_password" name="new_password" placeholder="Mínimo 8 caracteres" required>
-                        <small style="color: #666;">Debe incluir mayúscula, número y carácter especial</small>
+                        <label for="new_password">Nueva Contrasena</label>
+                        <input type="password" id="new_password" name="new_password" placeholder="Minimo 8 caracteres" required>
+                        <small style="color: #666;">Debe incluir mayuscula, numero y caracter especial</small>
                     </div>
                     <div class="form-group">
-                        <label for="confirm_password">Confirmar Contraseña</label>
-                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Repite la contraseña" required>
+                        <label for="confirm_password">Confirmar Contrasena</label>
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Repite la contrasena" required>
                     </div>
                     <div id="password-message" style="margin-top: 1rem; padding: 0.8rem; border-radius: 4px; display: none;"></div>
                     <div class="form-actions" style="margin-top: 1rem;">
-                        <button type="submit" class="btn btn-success">Actualizar Contraseña</button>
+                        <button type="submit" class="btn btn-success">Actualizar Contrasena</button>
                     </div>
                 </form>
             </section>

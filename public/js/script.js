@@ -1,4 +1,5 @@
 let currentUser = null
+const THEME_STORAGE_KEY = "ferresoft.theme"
 
 // Evitar que usar "atrás" muestre caché obsoleta (falsa sensación de que no se guardó)
 window.addEventListener("pageshow", (event) => {
@@ -48,6 +49,29 @@ function resolveImagePath(path) {
   }
 
   return `${appBase}/${normalized}`
+}
+
+function applyTheme(theme = "light") {
+  const normalized = theme === "dark" ? "dark" : "light"
+  document.documentElement.setAttribute("data-theme", normalized)
+  localStorage.setItem(THEME_STORAGE_KEY, normalized)
+}
+
+function resetThemeToDefault() {
+  localStorage.removeItem(THEME_STORAGE_KEY)
+  document.documentElement.setAttribute("data-theme", "light")
+}
+
+async function logoutUser(redirectTo = "login.html") {
+  try {
+    await fetch("../controllers/auth.php?action=logout")
+  } catch (error) {
+    console.log("[v0] Error logging out:", error)
+  } finally {
+    currentUser = null
+    resetThemeToDefault()
+    window.location.href = redirectTo
+  }
 }
 
 // ayuda para modal de confirmación (sí / no)
@@ -162,9 +186,7 @@ async function checkUserSession() {
       if (menuNameEl) {
         menuNameEl.textContent = data.user.nombre
       }
-      if (menuBtn) {
-        menuBtn.style.color = "inherit"
-      }
+      applyTheme(data.user.theme_preference || "light")
 
       // Actualizar opciones del menú según rol
       if (userMenu) {
@@ -189,12 +211,7 @@ async function checkUserSession() {
           newLogoutLink.addEventListener("click", (e) => {
             e.preventDefault()
             showConfirm("¿Seguro que deseas cerrar sesión?", async () => {
-              try {
-                await fetch("../controllers/auth.php?action=logout")
-                window.location.href = "login.html"
-              } catch (error) {
-                console.log("Error logging out:", error)
-              }
+              await logoutUser()
             })
           })
         }
@@ -204,9 +221,7 @@ async function checkUserSession() {
     } else {
       // Usuario no logueado: mostrar opciones básicas
       currentUser = null
-      if (menuBtn) {
-        menuBtn.style.color = "#999"
-      }
+      resetThemeToDefault()
       if (menuNameEl) {
         menuNameEl.textContent = "Usuario"
       }
@@ -247,12 +262,7 @@ function setupUserMenu() {
 
 document.getElementById("logout-btn")?.addEventListener("click", () => {
   showConfirm("¿Seguro que deseas cerrar sesión?", async () => {
-    try {
-      await fetch("../controllers/auth.php?action=logout")
-      window.location.href = "login.html"
-    } catch (error) {
-      console.log("[v0] Error logging out:", error)
-    }
+    await logoutUser()
   })
 })
 
@@ -415,8 +425,8 @@ async function cargarProductos() {
 
 // Manejar tema al cargar la página
 function applySavedTheme() {
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  document.documentElement.setAttribute('data-theme', savedTheme);
+  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "light"
+  document.documentElement.setAttribute("data-theme", savedTheme)
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -536,3 +546,8 @@ function closeProductModal() {
     }
   }
 }
+
+
+
+
+
