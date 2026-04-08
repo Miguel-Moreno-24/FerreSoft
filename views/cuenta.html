@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cuenta - FerreSoft</title>
+    <link rel="stylesheet" href="../public/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <h1>FerreSoft - Mi Cuenta</h1>
+            <div class="nav-links">
+                <a href="index.html">Volver a la Tienda</a>
+                <div class="user-menu-wrapper">
+                    <button id="user-menu-btn" class="user-menu-btn">
+                        <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span id="user-menu-name">Usuario</span>
+                    </button>
+                    <div id="user-menu" class="user-menu hidden">
+                        <a href="cuenta.html" class="menu-item active">Mi Cuenta</a>
+                        <a href="#" class="menu-item" id="logout-menu-link">Cerrar Sesión</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="account-container">
+            <h2>Mi Cuenta</h2>
+            <p class="account-subtitle">Actualiza tu información personal</p>
+
+            <div id="account-form-wrapper">
+                <form id="account-form">
+                    <div class="form-group">
+                        <label for="nombre">Nombre Completo *</label>
+                        <input type="text" id="nombre" name="nombre" placeholder="Tu nombre completo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico *</label>
+                        <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tipo_documento">Tipo de Documento</label>
+                            <select id="tipo_documento" name="tipo_documento">
+                                <option value="">Selecciona tipo</option>
+                                <option value="Cédula de ciudadanía">Cédula de ciudadanía</option>
+                                <option value="Tarjeta de identidad">Tarjeta de identidad</option>
+                                <option value="Cédula de extranjería">Cédula de extranjería</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="numero_documento">Número de Documento</label>
+                            <input type="text" id="numero_documento" name="numero_documento" placeholder="Número">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input type="tel" id="telefono" name="telefono" placeholder="+1 234 567 8900">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ciudad">Ciudad</label>
+                        <input type="text" id="ciudad" name="ciudad" placeholder="Tu ciudad">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="direccion">Dirección</label>
+                        <textarea id="direccion" name="direccion" placeholder="Tu dirección completa" rows="3"></textarea>
+                    </div>
+
+                    <div id="message" style="margin-top: 1rem; padding: 0.8rem; border-radius: 4px; display: none;"></div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                        <button type="button" class="btn" onclick="window.location.href='index.html'">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 FerreSoft. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="../public/js/script.js"></script>
+    <script src="../public/js/cuenta.js"></script>
+</body>
+</html>

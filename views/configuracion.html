@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - FerreSoft</title>
+    <link rel="stylesheet" href="../public/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <h1>FerreSoft - Configuración</h1>
+            <div class="nav-links">
+                <a href="index.html">Volver a la Tienda</a>
+                <div class="user-menu-wrapper">
+                    <button id="user-menu-btn" class="user-menu-btn">
+                        <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span id="user-menu-name">Usuario</span>
+                    </button>
+                    <div id="user-menu" class="user-menu hidden">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="config-container">
+            <h2>Configuración</h2>
+            
+            <!-- Sección de Tema -->
+            <section class="config-section">
+                <h3>Preferencia de Tema</h3>
+                <div class="theme-switch-wrapper">
+                    <p>Elige el estilo visual de la página:</p>
+                    <div class="theme-options">
+                        <label class="theme-option">
+                            <input type="radio" name="theme" value="light" checked>
+                            <span>Claro</span>
+                        </label>
+                        <label class="theme-option">
+                            <input type="radio" name="theme" value="dark">
+                            <span>Oscuro</span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <hr style="margin: 2rem 0; border: none; border-top: 1px solid #ddd;">
+
+            <!-- Sección de Seguridad -->
+            <section class="config-section">
+                <h3>Seguridad</h3>
+                <form id="password-form">
+                    <div class="form-group">
+                        <label for="new_password">Nueva Contraseña</label>
+                        <input type="password" id="new_password" name="new_password" placeholder="Mínimo 8 caracteres" required>
+                        <small style="color: #666;">Debe incluir mayúscula, número y carácter especial</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Confirmar Contraseña</label>
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Repite la contraseña" required>
+                    </div>
+                    <div id="password-message" style="margin-top: 1rem; padding: 0.8rem; border-radius: 4px; display: none;"></div>
+                    <div class="form-actions" style="margin-top: 1rem;">
+                        <button type="submit" class="btn btn-success">Actualizar Contraseña</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <script src="../public/js/script.js"></script>
+    <script src="../public/js/config.js"></script>
+</body>
+</html>

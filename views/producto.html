@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle de Producto - FerreSoft</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .product-detail {
+      max-width: 1000px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    .product-image-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .product-image-wrapper {
+      width: 100%;
+      height: 380px;
+      overflow: auto;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f9f9f9;
+    }
+    .product-detail img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+    .zoom-controls {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .zoom-btn {
+      padding: 0.4rem 0.8rem;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.3s;
+    }
+    .zoom-btn:hover {
+      background: #2980b9;
+    }
+    .zoom-display {
+      font-size: 0.85rem;
+      color: #7f8c8d;
+      text-align: center;
+    }
+    .product-detail h2 {
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+    }
+    .product-detail .precio {
+      font-size: 1.8rem;
+      margin: 1rem 0;
+    }
+    .product-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .qty-input {
+      width: 100px;
+      padding: 0.6rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    .back-link {
+      display: inline-block;
+      margin: 1rem 0 0.5rem;
+      color: #3498db;
+      text-decoration: none;
+    }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="navbar">
+      <h1>FerreSoft - Detalle del Producto</h1>
+      <div class="nav-links">
+        <button class="cart-btn" onclick="window.location.href='carrito.html'">
+            <svg class="cart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span class="cart-count" id="cart-count">0</span>
+        </button>
+        <div class="user-menu-wrapper">
+            <button id="user-menu-btn" class="user-menu-btn">
+                <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span id="user-menu-name">Usuario</span>
+            </button>
+            <div id="user-menu" class="user-menu hidden">
+                <a href="cuenta.html" class="menu-item">Mi Cuenta</a>
+                <a href="#" class="menu-item" id="admin-panel-link" style="display: none;">Panel Admin</a>
+                <a href="#" class="menu-item" id="logout-menu-link">Cerrar Sesión</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <a href="index.html" class="back-link">← Volver a la tienda</a>
+    <div id="product-detail" class="product-detail">
+      <p class="loading">Cargando producto...</p>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 FerreSoft. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="../public/js/script.js"></script>
+  <script src="../public/js/producto.js"></script>
+</body>
+</html>

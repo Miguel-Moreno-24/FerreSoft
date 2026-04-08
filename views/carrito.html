@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito - FerreSoft</title>
+    <link rel="stylesheet" href="../public/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <h1>FerreSoft - Carrito de Compras</h1>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link-light">Volver a la Tienda</a>
+                <div class="user-menu-wrapper">
+                    <button id="user-menu-btn" class="user-menu-btn">
+                        <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span id="user-menu-name">Usuario</span>
+                    </button>
+                    <div id="user-menu" class="user-menu hidden">
+                        <a href="cuenta.html" class="menu-item">Mi Cuenta</a>
+                        <a href="#" class="menu-item" id="logout-menu-link">Cerrar Sesión</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="cart-container">
+            <h2>Tu Carrito</h2>
+            <div id="cart-items">
+                <p class="loading">Cargando carrito...</p>
+            </div>
+            
+            <div id="cart-summary" class="cart-summary" style="display: none;">
+                <div class="cart-total">
+                    <h3>Total: $<span id="cart-total">0.00</span></h3>
+                </div>
+                
+                <div class="cart-actions">
+                    <button class="btn btn-danger" onclick="clearCart()">Vaciar Carrito</button>
+                    <button class="btn btn-success" onclick="checkout()">Finalizar Compra</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="detalle-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="detalle-nombre">Producto</h2>
+            <div class="product-image-wrapper" style="width:100%; height:300px; border: 1px solid #ddd; border-radius: 8px; margin: 0.5rem 0 1rem; overflow:hidden; display:flex;align-items:center;justify-content:center;">
+                <img id="detalle-imagen" src="" alt="" style="width:100%; height:100%; object-fit:contain; border-radius:8px;">
+            </div>
+            <p id="detalle-descripcion"></p>
+            <p class="precio" id="detalle-precio"></p>
+            <p class="stock" id="detalle-stock"></p>
+            <div style="display:flex; gap:0.8rem; align-items:center; margin-top: 1rem;">
+                <input id="detalle-cantidad" type="number" min="1" value="1" class="qty-input" style="width:100px; padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
+                <button id="detalle-add-btn" class="btn btn-success">Agregar al Carrito</button>
+                <button type="button" class="btn" id="detalle-cerrar-btn">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 FerreSoft. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="../public/js/script.js"></script>
+    <script src="../public/js/carrito.js"></script>
+</body>
+</html>
