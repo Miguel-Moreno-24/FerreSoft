@@ -16,13 +16,27 @@ async function checkAdminAccess() {
     applyTheme(data.user.theme_preference || "light")
     const menuName = document.getElementById("user-menu-name")
     if (menuName) menuName.textContent = data.user.nombre
-    setupUserMenu()
-    await checkUserSession()
     return true
   } catch (error) {
+    console.error("Error admin auth:", error)
     window.location.href = "login.html"
     return false
   }
+}
+
+function showSection(sectionId) {
+  document.querySelectorAll(".admin-view-section").forEach((section) => {
+    section.classList.toggle("active", section.id === `section-${sectionId}`)
+  })
+
+  document.querySelectorAll(".admin-sidebar-item").forEach((button) => {
+    button.classList.toggle("active", button.dataset.section === sectionId)
+  })
+
+  if (sectionId === "dashboard") loadStats()
+  if (sectionId === "productos") loadProducts()
+  if (sectionId === "pedidos") loadPedidos()
+  if (sectionId === "usuarios") loadUsuarios()
 }
 
 function sortProducts(list) {
@@ -62,6 +76,7 @@ async function loadStats() {
 
 async function loadProducts() {
   const tbody = document.getElementById("productos-table")
+  if (!tbody) return
   tbody.innerHTML = '<tr><td colspan="7" class="loading">Cargando...</td></tr>'
 
   try {
@@ -77,6 +92,7 @@ async function loadProducts() {
 
 function renderProducts(list) {
   const tbody = document.getElementById("productos-table")
+  if (!tbody) return
   tbody.innerHTML = ""
 
   if (!list.length) {
@@ -132,6 +148,7 @@ async function resetCounters() {
 
 async function loadPedidos() {
   const tbody = document.getElementById("pedidos-table")
+  if (!tbody) return
   tbody.innerHTML = '<tr><td colspan="6" class="loading">Cargando...</td></tr>'
 
   try {
@@ -182,6 +199,7 @@ async function updatePedidoEstado(id, estado) {
 
 async function loadUsuarios() {
   const tbody = document.getElementById("usuarios-table")
+  if (!tbody) return
   tbody.innerHTML = '<tr><td colspan="6" class="loading">Cargando...</td></tr>'
 
   try {
@@ -235,6 +253,7 @@ async function deleteUsuario(id) {
 function openModal(producto = null) {
   const modal = document.getElementById("producto-modal")
   const form = document.getElementById("producto-form")
+  if (!modal || !form) return
 
   if (producto) {
     document.getElementById("modal-title").textContent = "Editar Producto"
@@ -254,7 +273,7 @@ function openModal(producto = null) {
 }
 
 function closeModal() {
-  document.getElementById("producto-modal").classList.remove("active")
+  document.getElementById("producto-modal")?.classList.remove("active")
 }
 
 function editProduct(id) {
@@ -325,8 +344,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderProducts(getFilteredProducts())
   })
 
-  loadStats()
-  loadProducts()
-  loadPedidos()
-  loadUsuarios()
+  showSection("dashboard")
 })

@@ -184,7 +184,7 @@ const response = await fetch("../controllers/carrito.php?action=clear", {
       await doClear()
       resolve()
     }, () => {
-      // canceled
+      // El usuario cancelo la accion.
       resolve()
     })
   })

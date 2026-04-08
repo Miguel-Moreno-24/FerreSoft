@@ -1,5 +1,16 @@
 let isLogin = true
 
+async function checkEmailExists(email) {
+  try {
+    const response = await fetch(`../controllers/auth.php?action=email_exists&email=${encodeURIComponent(email)}`)
+    const data = await response.json()
+    return data.success && data.exists
+  } catch (error) {
+    console.log("[v0] Error checking email:", error)
+    return false
+  }
+}
+
 function toggleMode(toLogin) {
   isLogin = toLogin
 
@@ -11,16 +22,16 @@ function toggleMode(toLogin) {
 
   if (isLogin) {
     if (nombreGroup) nombreGroup.style.display = "none"
-    if (formTitle) formTitle.textContent = "Iniciar Sesión"
-    if (submitBtn) submitBtn.textContent = "Iniciar Sesión"
-    if (toggleText) toggleText.textContent = "¿No tienes cuenta?"
-    if (toggleLink) toggleLink.textContent = "Regístrate"
+    if (formTitle) formTitle.textContent = "Iniciar SesiÃ³n"
+    if (submitBtn) submitBtn.textContent = "Iniciar SesiÃ³n"
+    if (toggleText) toggleText.textContent = "Â¿No tienes cuenta?"
+    if (toggleLink) toggleLink.textContent = "RegÃ­strate"
   } else {
     if (nombreGroup) nombreGroup.style.display = "block"
     if (formTitle) formTitle.textContent = "Registrarse"
     if (submitBtn) submitBtn.textContent = "Registrarse"
-    if (toggleText) toggleText.textContent = "¿Ya tienes cuenta?"
-    if (toggleLink) toggleLink.textContent = "Iniciar Sesión"
+    if (toggleText) toggleText.textContent = "Â¿Ya tienes cuenta?"
+    if (toggleLink) toggleLink.textContent = "Iniciar SesiÃ³n"
   }
 
   const msg = document.getElementById("message")
@@ -34,7 +45,7 @@ document.getElementById("toggle-link").addEventListener("click", (e) => {
 
 document.addEventListener("DOMContentLoaded", () => {
   const urlParams = new URLSearchParams(window.location.search)
-  if (urlParams.get('mode') === 'register') {
+  if (urlParams.get("mode") === "register") {
     toggleMode(false)
   }
 })
@@ -51,24 +62,24 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
   const password = document.getElementById("password").value
 
   if (!email && !password) {
-    messageDiv.textContent = "Debes ingresar correo y contraseña"
+    messageDiv.textContent = "Debes ingresar correo y contraseÃ±a"
     return
   }
 
   if (!email) {
-    messageDiv.textContent = "Debes ingresar un correo electrónico"
+    messageDiv.textContent = "Debes ingresar un correo electrÃ³nico"
     return
   }
 
-  // Validar formato básico de correo
+  // Validar formato bÃ¡sico de correo
   const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   if (!emailValido) {
-    messageDiv.textContent = "Ingresa un correo válido"
+    messageDiv.textContent = "Ingresa un correo vÃ¡lido"
     return
   }
 
   if (!password) {
-    messageDiv.textContent = "Debes ingresar una contraseña"
+    messageDiv.textContent = "Debes ingresar una contraseÃ±a"
     return
   }
 
@@ -84,10 +95,16 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
       return
     }
 
-    const nombreValido = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s'-]+$/u.test(nombre)
+    const nombreValido = /^[\\p{L}\\s'-]+$/u.test(nombre)
     if (!nombreValido) {
       messageDiv.style.color = "#ef4444"
       messageDiv.textContent = "El nombre solo puede contener letras y espacios"
+      return
+    }
+
+    if (await checkEmailExists(email)) {
+      messageDiv.style.color = "#ef4444"
+      messageDiv.textContent = "El correo ya esta registrado"
       return
     }
 
@@ -99,7 +116,7 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
     if (!(tieneMayuscula && tieneNumero && tieneEspecial && tieneAlMenos8)) {
       messageDiv.style.color = "#ef4444"
       messageDiv.textContent =
-        "La contraseña debe tener al menos 8 caracteres e incluir una mayúscula, un número y un carácter especial"
+        "La contraseÃ±a debe tener al menos 8 caracteres e incluir una mayÃºscula, un nÃºmero y un carÃ¡cter especial"
       return
     }
 
@@ -130,7 +147,7 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
           }
         }, 1000)
       } else {
-        // Ya se inició sesión en el backend tras registrar el usuario
+        // Ya se iniciÃ³ sesiÃ³n en el backend tras registrar el usuario
         setTimeout(() => {
           window.location.href = "index.html"
         }, 1000)
@@ -141,11 +158,11 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
     }
   } catch (error) {
     console.log("[v0] Error:", error)
-    document.getElementById("message").textContent = "Error de conexión"
+    document.getElementById("message").textContent = "Error de conexiÃ³n"
   }
 })
 
-// password visibility toggle
+// Alternar visibilidad de la contrasena
 const pwInput = document.getElementById("password")
 const showPw = document.getElementById("show-password-checkbox")
 if (showPw && pwInput) {
@@ -153,4 +170,3 @@ if (showPw && pwInput) {
     pwInput.type = showPw.checked ? "text" : "password"
   })
 }
-

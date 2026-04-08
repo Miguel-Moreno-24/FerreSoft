@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-Type: application/json');
-require_once '../models/Db.php';
+require_once '../models/AppDb.php';
 
 $action = $_GET['action'] ?? 'list';
 

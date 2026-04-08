@@ -27,108 +27,128 @@
     </header>
 
     <main class="container admin-page-shell">
-        <section class="admin-overview-card">
-            <h2>Resumen del sistema</h2>
-            <div class="stats-grid">
-                <article class="stat-card">
-                    <h4>Productos</h4>
-                    <div class="value" id="stat-productos">0</div>
-                </article>
-                <article class="stat-card">
-                    <h4>Usuarios</h4>
-                    <div class="value" id="stat-usuarios">0</div>
-                </article>
-                <article class="stat-card">
-                    <h4>Pedidos</h4>
-                    <div class="value" id="stat-pedidos">0</div>
-                </article>
-            </div>
-        </section>
+        <div class="admin-layout-shell">
+            <aside class="admin-sidebar">
+                <h2>Secciones</h2>
+                <button class="admin-sidebar-item active" data-section="dashboard" onclick="showSection('dashboard')">Resumen</button>
+                <button class="admin-sidebar-item" data-section="productos" onclick="showSection('productos')">Productos</button>
+                <button class="admin-sidebar-item" data-section="pedidos" onclick="showSection('pedidos')">Pedidos</button>
+                <button class="admin-sidebar-item" data-section="usuarios" onclick="showSection('usuarios')">Usuarios</button>
+            </aside>
 
-        <section class="admin-section-card">
-            <div class="admin-section-heading">
-                <div>
-                    <h2>Gestion de Productos</h2>
-                    <p>Administra el catalogo manteniendo el orden por identificacion y acciones claras.</p>
-                </div>
-            </div>
-            <div class="admin-toolbar">
-                <button class="btn btn-success admin-action-btn" onclick="openModal()">Agregar Producto</button>
-                <button class="btn admin-action-btn admin-secondary-btn" onclick="resetCounters()">Reiniciar contadores</button>
-                <input type="text" id="productos-search" class="admin-search" placeholder="Buscar producto...">
-                <button class="btn admin-action-btn admin-secondary-btn" id="toggle-order-btn" onclick="toggleRecentOrder()">Ver mas recientes</button>
-            </div>
-            <div class="admin-table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Imagen</th>
-                            <th>Nombre</th>
-                            <th>Descripcion</th>
-                            <th>Precio</th>
-                            <th>Stock</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productos-table">
-                        <tr><td colspan="7" class="loading">Cargando...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+            <div class="admin-content-stack">
+                <section id="section-dashboard" class="admin-view-section active">
+                    <div class="admin-overview-card">
+                        <h2>Resumen del sistema</h2>
+                        <div class="stats-grid">
+                            <article class="stat-card">
+                                <h4>Productos</h4>
+                                <div class="value" id="stat-productos">0</div>
+                            </article>
+                            <article class="stat-card">
+                                <h4>Usuarios</h4>
+                                <div class="value" id="stat-usuarios">0</div>
+                            </article>
+                            <article class="stat-card">
+                                <h4>Pedidos</h4>
+                                <div class="value" id="stat-pedidos">0</div>
+                            </article>
+                        </div>
+                    </div>
+                </section>
 
-        <section class="admin-section-card">
-            <div class="admin-section-heading">
-                <div>
-                    <h2>Pedidos</h2>
-                    <p>Seguimiento del estado de compra y detalle por cliente.</p>
-                </div>
-            </div>
-            <div class="admin-table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Pedido #</th>
-                            <th>Usuario</th>
-                            <th>Productos</th>
-                            <th>Total</th>
-                            <th>Estado</th>
-                            <th>Fecha</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pedidos-table">
-                        <tr><td colspan="6" class="loading">Cargando...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+                <section id="section-productos" class="admin-view-section">
+                    <div class="admin-section-card">
+                        <div class="admin-section-heading">
+                            <div>
+                                <h2>Gestion de Productos</h2>
+                                <p>Administra el catalogo manteniendo el orden por identificacion y acciones claras.</p>
+                            </div>
+                        </div>
+                        <div class="admin-toolbar">
+                            <button class="btn btn-success admin-action-btn" onclick="openModal()">Agregar Producto</button>
+                            <button class="btn admin-action-btn admin-secondary-btn" onclick="resetCounters()">Reiniciar contadores</button>
+                            <input type="text" id="productos-search" class="admin-search" placeholder="Buscar producto...">
+                            <button class="btn admin-action-btn admin-secondary-btn" id="toggle-order-btn" onclick="toggleRecentOrder()">Ver mas recientes</button>
+                        </div>
+                        <div class="admin-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Imagen</th>
+                                        <th>Nombre</th>
+                                        <th>Descripcion</th>
+                                        <th>Precio</th>
+                                        <th>Stock</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productos-table">
+                                    <tr><td colspan="7" class="loading">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
 
-        <section class="admin-section-card">
-            <div class="admin-section-heading">
-                <div>
-                    <h2>Usuarios</h2>
-                    <p>Consulta usuarios registrados y controla accesos administrativos.</p>
-                </div>
+                <section id="section-pedidos" class="admin-view-section">
+                    <div class="admin-section-card">
+                        <div class="admin-section-heading">
+                            <div>
+                                <h2>Pedidos</h2>
+                                <p>Seguimiento del estado de compra y detalle por cliente.</p>
+                            </div>
+                        </div>
+                        <div class="admin-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Pedido #</th>
+                                        <th>Usuario</th>
+                                        <th>Productos</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pedidos-table">
+                                    <tr><td colspan="6" class="loading">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="section-usuarios" class="admin-view-section">
+                    <div class="admin-section-card">
+                        <div class="admin-section-heading">
+                            <div>
+                                <h2>Usuarios</h2>
+                                <p>Consulta usuarios registrados y controla accesos administrativos.</p>
+                            </div>
+                        </div>
+                        <div class="admin-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Rol</th>
+                                        <th>Registro</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usuarios-table">
+                                    <tr><td colspan="6" class="loading">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
             </div>
-            <div class="admin-table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Rol</th>
-                            <th>Registro</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usuarios-table">
-                        <tr><td colspan="6" class="loading">Cargando...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+        </div>
     </main>
 
     <div id="producto-modal" class="modal">

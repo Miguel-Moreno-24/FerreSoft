@@ -17,12 +17,30 @@ function buildUserPayload(array $user): array
     ];
 }
 
+function emailExists(mysqli $conn, string $email): bool
+{
+    $stmt = $conn->prepare('SELECT id FROM usuarios WHERE email = ?');
+    if (!$stmt) {
+        return false;
+    }
+
+    $stmt->bind_param('s', $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result && $result->num_rows > 0;
+}
+
 switch ($action) {
     case 'login':
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
         $stmt = $conn->prepare('SELECT id, nombre, email, password, rol, theme_preference FROM usuarios WHERE email = ?');
+        if (!$stmt) {
+            echo json_encode(['success' => false, 'message' => 'Error al preparar el inicio de sesion']);
+            break;
+        }
+
         $stmt->bind_param('s', $email);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -39,8 +57,10 @@ switch ($action) {
         } elseif ($password === $user['password'] && !preg_match('/^\$2[ayb]\$/', $user['password'])) {
             $newHash = password_hash($password, PASSWORD_DEFAULT);
             $upd = $conn->prepare('UPDATE usuarios SET password = ? WHERE id = ?');
-            $upd->bind_param('si', $newHash, $user['id']);
-            $upd->execute();
+            if ($upd) {
+                $upd->bind_param('si', $newHash, $user['id']);
+                $upd->execute();
+            }
             $valid = true;
             $user['password'] = $newHash;
         } else {
@@ -74,8 +94,18 @@ switch ($action) {
             break;
         }
 
-        if (!preg_match('/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s\'-]+$/u', $nombre)) {
+        if (!preg_match('/^[\\p{L}\\s\'-]+$/u', $nombre)) {
             echo json_encode(['success' => false, 'message' => 'El nombre solo puede contener letras y espacios']);
+            break;
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(['success' => false, 'message' => 'Ingresa un correo valido']);
+            break;
+        }
+
+        if (emailExists($conn, $email)) {
+            echo json_encode(['success' => false, 'message' => 'El correo ya esta registrado']);
             break;
         }
 
@@ -91,15 +121,6 @@ switch ($action) {
             break;
         }
 
-        $stmt = $conn->prepare('SELECT id FROM usuarios WHERE email = ?');
-        $stmt->bind_param('s', $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($result && $result->num_rows > 0) {
-            echo json_encode(['success' => false, 'message' => 'El correo ya esta registrado']);
-            break;
-        }
-
         $hashed = password_hash($password, PASSWORD_DEFAULT);
 
         $countResult = mysqli_query($conn, 'SELECT COUNT(*) AS c FROM usuarios');
@@ -111,13 +132,24 @@ switch ($action) {
         }
 
         $stmt = $conn->prepare("INSERT INTO usuarios (nombre, email, password, rol, theme_preference) VALUES (?, ?, ?, 'cliente', 'light')");
+        if (!$stmt) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al preparar el registro: ' . mysqli_error($conn),
+            ]);
+            break;
+        }
+
         $stmt->bind_param('sss', $nombre, $email, $hashed);
 
         if (!$stmt->execute()) {
-            if (isset($conn->errno) && $conn->errno === 1062) {
+            if ((int) $conn->errno === 1062) {
                 echo json_encode(['success' => false, 'message' => 'El correo ya esta registrado']);
             } else {
-                echo json_encode(['success' => false, 'message' => 'Error al registrar usuario']);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Error al registrar usuario: ' . $stmt->error,
+                ]);
             }
             break;
         }
@@ -141,6 +173,19 @@ switch ($action) {
         ]);
         break;
 
+    case 'email_exists':
+        $email = trim($_GET['email'] ?? '');
+        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(['success' => false, 'message' => 'Ingresa un correo valido']);
+            break;
+        }
+
+        echo json_encode([
+            'success' => true,
+            'exists' => emailExists($conn, $email),
+        ]);
+        break;
+
     case 'logout':
         $_SESSION = [];
         session_destroy();
@@ -154,6 +199,11 @@ switch ($action) {
         }
 
         $stmt = $conn->prepare('SELECT id, nombre, email, rol, theme_preference FROM usuarios WHERE id = ?');
+        if (!$stmt) {
+            echo json_encode(['success' => true, 'logged_in' => false]);
+            break;
+        }
+
         $stmt->bind_param('i', $_SESSION['user_id']);
         $stmt->execute();
         $user = $stmt->get_result()->fetch_assoc();

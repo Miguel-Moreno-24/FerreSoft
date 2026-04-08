@@ -1,7 +1,7 @@
 let currentUser = null
 const THEME_STORAGE_KEY = "ferresoft.theme"
 
-// Evitar que usar "atrás" muestre caché obsoleta (falsa sensación de que no se guardó)
+// Evitar que usar "atras" muestre cache obsoleta (falsa sensacion de que no se guardo)
 window.addEventListener("pageshow", (event) => {
   if (event.persisted) {
     window.location.reload()
@@ -74,7 +74,7 @@ async function logoutUser(redirectTo = "login.html") {
   }
 }
 
-// ayuda para modal de confirmación (sí / no)
+// ayuda para modal de confirmacion (si / no)
 function showConfirm(message, onYes, onNo) {
   let modal = document.getElementById("confirm-modal")
   if (!modal) {
@@ -85,7 +85,7 @@ function showConfirm(message, onYes, onNo) {
       <div class="modal-content">
         <p id="confirm-message"></p>
         <div class="modal-actions">
-          <button id="confirm-yes" class="btn btn-success">Sí</button>
+          <button id="confirm-yes" class="btn btn-success">S\u00ED</button>
           <button id="confirm-no" class="btn">No</button>
         </div>
       </div>
@@ -122,7 +122,7 @@ function showConfirm(message, onYes, onNo) {
   modal.classList.add("active")
 }
 
-// modal para confirmar inicio de sesión (con botones personalizados)
+// modal para confirmar inicio de sesion (con botones personalizados)
 function showLoginConfirm(message, onLogin, onStay) {
   let modal = document.getElementById("login-confirm-modal")
   if (!modal) {
@@ -133,8 +133,8 @@ function showLoginConfirm(message, onLogin, onStay) {
       <div class="modal-content">
         <p id="login-confirm-message"></p>
         <div class="modal-actions">
-          <button id="login-confirm-go" class="btn btn-success">Ir al Inicio de Sesión</button>
-          <button id="login-confirm-stay" class="btn">Quedarse en la página</button>
+          <button id="login-confirm-go" class="btn btn-success">Ir al Inicio de Sesi\u00F3n</button>
+          <button id="login-confirm-stay" class="btn">Quedarse en la p\u00E1gina</button>
         </div>
       </div>
     `
@@ -188,7 +188,7 @@ async function checkUserSession() {
       }
       applyTheme(data.user.theme_preference || "light")
 
-      // Actualizar opciones del menú según rol
+      // Actualizar opciones del menu segun rol
       if (userMenu) {
         const rolLower = String(data.user.rol).toLowerCase()
         let menuHTML = `<a href="cuenta.html" class="menu-item">Mi Cuenta</a>`
@@ -200,8 +200,8 @@ async function checkUserSession() {
         }
         
         menuHTML += `
-          <a href="configuracion.html" class="menu-item">Configuración</a>
-          <a href="#" class="menu-item" id="logout-menu-link">Cerrar Sesión</a>
+          <a href="configuracion.html" class="menu-item">Configuraci\u00F3n</a>
+          <a href="#" class="menu-item" id="logout-menu-link">Cerrar Sesi\u00F3n</a>
         `
         userMenu.innerHTML = menuHTML
         
@@ -210,7 +210,7 @@ async function checkUserSession() {
         if (newLogoutLink) {
           newLogoutLink.addEventListener("click", (e) => {
             e.preventDefault()
-            showConfirm("¿Seguro que deseas cerrar sesión?", async () => {
+            showConfirm("\u00BFSeguro que deseas cerrar sesi\u00F3n?", async () => {
               await logoutUser()
             })
           })
@@ -219,7 +219,7 @@ async function checkUserSession() {
 
       loadCartCount()
     } else {
-      // Usuario no logueado: mostrar opciones básicas
+      // Usuario no logueado: mostrar opciones basicas
       currentUser = null
       resetThemeToDefault()
       if (menuNameEl) {
@@ -228,9 +228,9 @@ async function checkUserSession() {
       
       if (userMenu) {
         userMenu.innerHTML = `
-          <a href="login.html" class="menu-item">Iniciar Sesión</a>
+          <a href="login.html" class="menu-item">Iniciar Sesi\u00F3n</a>
           <a href="login.html?mode=register" class="menu-item">Registrarse</a>
-          <a href="configuracion.html" class="menu-item">Configuración</a>
+          <a href="configuracion.html" class="menu-item">Configuraci\u00F3n</a>
         `
       }
     }
@@ -239,20 +239,22 @@ async function checkUserSession() {
   }
 }
 
-// Manejar menú desplegable de usuario
+// Manejar menu desplegable de usuario
 function setupUserMenu() {
   const menuBtn = document.getElementById("user-menu-btn")
   const userMenu = document.getElementById("user-menu")
 
   if (!menuBtn || !userMenu) return
+  if (menuBtn.dataset.menuBound === "true") return
+  menuBtn.dataset.menuBound = "true"
 
-  // Toggle menú al hacer click en botón
+  // Toggle menu al hacer click en boton
   menuBtn.addEventListener("click", (e) => {
     e.stopPropagation()
     userMenu.classList.toggle("hidden")
   })
 
-  // Cerrar menú si se hace click fuera
+  // Cerrar menu si se hace click fuera
   document.addEventListener("click", (e) => {
     if (!menuBtn.contains(e.target) && !userMenu.contains(e.target)) {
       userMenu.classList.add("hidden")
@@ -261,7 +263,7 @@ function setupUserMenu() {
 }
 
 document.getElementById("logout-btn")?.addEventListener("click", () => {
-  showConfirm("¿Seguro que deseas cerrar sesión?", async () => {
+  showConfirm("\u00BFSeguro que deseas cerrar sesi\u00F3n?", async () => {
     await logoutUser()
   })
 })
@@ -282,9 +284,9 @@ async function loadCartCount() {
 
 async function addToCart(productoId, maxStock = null, cantidadOverride = null) {
   if (!currentUser) {
-    // Mostrar modal de confirmación en lugar de redirigir directamente
+    // Mostrar modal de confirmacion en lugar de redirigir directamente
     showLoginConfirm(
-      "Debes iniciar sesión para agregar productos al carrito",
+      "Debes iniciar sesi\u00F3n para agregar productos al carrito",
       () => {
         window.location.href = "login.html"
       },
@@ -297,7 +299,7 @@ async function addToCart(productoId, maxStock = null, cantidadOverride = null) {
 
   const limite = Number.isFinite(Number(maxStock)) && maxStock !== null ? Number(maxStock) : null
 
-  // función interna para enviar la petición una vez tengamos la cantidad
+  // funcion interna para enviar la peticion una vez tengamos la cantidad
   const enviarPedido = async (cantidad) => {
     const formData = new FormData()
     formData.append("producto_id", productoId)
@@ -326,7 +328,7 @@ async function addToCart(productoId, maxStock = null, cantidadOverride = null) {
   if (cantidadOverride !== null && cantidadOverride !== undefined) {
     const valor = parseInt(String(cantidadOverride), 10)
     if (Number.isNaN(valor) || valor < 1 || (limite !== null && valor > limite)) {
-      showToast(limite ? `Cantidad inválida. Ingresa un número entre 1 y ${limite}.` : "Cantidad inválida. Ingresa un número mayor o igual a 1.", "error")
+      showToast(limite ? `Cantidad inv\u00E1lida. Ingresa un n\u00FAmero entre 1 y ${limite}.` : "Cantidad inv\u00E1lida. Ingresa un n\u00FAmero mayor o igual a 1.", "error")
       return
     }
     enviarPedido(valor)
@@ -364,7 +366,7 @@ function showQuantityModal(limite, onConfirm, onCancel) {
   confirmBtn.onclick = () => {
     const valor = parseInt(input.value, 10)
     if (Number.isNaN(valor) || valor < 1 || (limite !== null && valor > limite)) {
-      showToast(limite ? `Cantidad inválida. Ingresa un número entre 1 y ${limite}.` : "Cantidad inválida. Ingresa un número mayor o igual a 1.", "error")
+      showToast(limite ? `Cantidad inv\u00E1lida. Ingresa un n\u00FAmero entre 1 y ${limite}.` : "Cantidad inv\u00E1lida. Ingresa un n\u00FAmero mayor o igual a 1.", "error")
       return
     }
     cleanup()
@@ -423,7 +425,7 @@ async function cargarProductos() {
   }
 }
 
-// Manejar tema al cargar la página
+// Manejar tema al cargar la pagina
 function applySavedTheme() {
   const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "light"
   document.documentElement.setAttribute("data-theme", savedTheme)
@@ -442,7 +444,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "carrito.html"
       } else {
         showLoginConfirm(
-          "Debes iniciar sesión para ver el carrito",
+          "Debes iniciar sesi\u00F3n para ver el carrito",
           () => {
             window.location.href = "login.html"
           },
@@ -487,7 +489,7 @@ async function openProductModal(id, readOnly = false) {
       document.getElementById("detalle-add-btn").disabled = true
     }
     
-    // Zoom con la rueda del ratón (sin botones visibles)
+    // Zoom con la rueda del raton (sin botones visibles)
     let zoomLevel = 1
     const img = document.getElementById("detalle-imagen")
     const wrapper = document.querySelector(".product-image-wrapper")
@@ -539,7 +541,7 @@ function closeProductModal() {
   if (modal) {
     modal.classList.remove("active")
 
-    // Si el modal tenía un listener de zoom, elimínalo y restaura el estado
+    // Si el modal tenia un listener de zoom, eliminalo y restaura el estado
     if (modal._cleanupZoom) {
       modal._cleanupZoom()
       delete modal._cleanupZoom
