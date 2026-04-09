@@ -16,22 +16,13 @@ switch ($action) {
     case 'add':
         $producto_id = $_POST['producto_id'] ?? 0;
         $cantidad = $_POST['cantidad'] ?? 1;
-        
-        $stmt = $conn->prepare("SELECT id, cantidad FROM carrito WHERE usuario_id = ? AND producto_id = ?");
-        $stmt->bind_param("ii", $usuario_id, $producto_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            $nueva_cantidad = $row['cantidad'] + $cantidad;
-            
-            $stmt = $conn->prepare("UPDATE carrito SET cantidad = ? WHERE id = ?");
-            $stmt->bind_param("ii", $nueva_cantidad, $row['id']);
-        } else {
-            $stmt = $conn->prepare("INSERT INTO carrito (usuario_id, producto_id, cantidad) VALUES (?, ?, ?)");
-            $stmt->bind_param("iii", $usuario_id, $producto_id, $cantidad);
-        }
+
+        $stmt = $conn->prepare("
+            INSERT INTO carrito (usuario_id, producto_id, cantidad)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE cantidad = cantidad + VALUES(cantidad)
+        ");
+        $stmt->bind_param("iii", $usuario_id, $producto_id, $cantidad);
         
         if ($stmt->execute()) {
             echo json_encode(['success' => true, 'message' => 'Producto agregado al carrito']);
@@ -137,13 +128,13 @@ switch ($action) {
         }
 
         $items = [];
-        $total = 0;
+        $subtotal = 0;
         while ($row = $result->fetch_assoc()) {
-            if ($row['stock'] < $row['cantidad']) {
+            if ((int) $row['stock'] < (int) $row['cantidad']) {
                 echo json_encode(['success' => false, 'message' => 'Stock insuficiente para algunos productos']);
                 exit;
             }
-            $total += $row['precio'] * $row['cantidad'];
+            $subtotal += $row['precio'] * $row['cantidad'];
             $items[] = $row;
         }
 
@@ -152,15 +143,38 @@ switch ($action) {
 
         try {
             // Crear pedido
-            $stmt = $conn->prepare("INSERT INTO pedidos (usuario_id, total, estado) VALUES (?, ?, 'Pendiente')");
-            $stmt->bind_param("id", $usuario_id, $total);
+            $numero_pedido = 'PED-' . date('YmdHis') . '-' . $usuario_id;
+            $stmt = $conn->prepare("INSERT INTO pedidos (numero_pedido, usuario_id, subtotal, total, estado) VALUES (?, ?, ?, ?, 'Pendiente')");
+            $stmt->bind_param("sidd", $numero_pedido, $usuario_id, $subtotal, $subtotal);
             $stmt->execute();
             $pedido_id = $conn->insert_id;
 
+            if ($pedido_id > 0) {
+                $numero_pedido_final = 'PED-' . str_pad((string) $pedido_id, 6, '0', STR_PAD_LEFT);
+                $stmt = $conn->prepare("UPDATE pedidos SET numero_pedido = ? WHERE id = ?");
+                $stmt->bind_param("si", $numero_pedido_final, $pedido_id);
+                $stmt->execute();
+            }
+
             // Insertar detalles y actualizar stock
             foreach ($items as $item) {
-                $stmt = $conn->prepare("INSERT INTO detalles_pedido (pedido_id, producto_id, cantidad, precio_unitario) VALUES (?, ?, ?, ?)");
-                $stmt->bind_param("iiid", $pedido_id, $item['producto_id'], $item['cantidad'], $item['precio']);
+                $detalle_sql = "
+                    INSERT INTO detalles_pedido (
+                        pedido_id,
+                        producto_id,
+                        producto_nombre,
+                        producto_imagen,
+                        cantidad,
+                        precio_unitario,
+                        subtotal
+                    )
+                    SELECT ?, p.id, p.nombre, p.imagen, ?, ?, ?
+                    FROM productos p
+                    WHERE p.id = ?
+                ";
+                $detalle_subtotal = $item['cantidad'] * $item['precio'];
+                $stmt = $conn->prepare($detalle_sql);
+                $stmt->bind_param("iiddi", $pedido_id, $item['cantidad'], $item['precio'], $detalle_subtotal, $item['producto_id']);
                 $stmt->execute();
 
                 $stmt = $conn->prepare("UPDATE productos SET stock = stock - ? WHERE id = ?");

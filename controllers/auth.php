@@ -18,22 +18,21 @@ function buildUserPayload(array $user): array
     ];
 }
 
+function emailExists(mysqli $conn, string $email): bool
+{
+    return appGetUserByEmail($conn, $email) !== null;
+}
+
 switch ($action) {
     case 'login':
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
-        $stmt = $conn->prepare('SELECT id, nombre, email, password, rol, theme_preference FROM usuarios WHERE email = ?');
-        $stmt->bind_param('s', $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows === 0) {
+        $user = appGetUserByEmail($conn, $email);
+        if (!$user) {
             echo json_encode(['success' => false, 'message' => 'Usuario no encontrado']);
             break;
         }
-
-        $user = $result->fetch_assoc();
 
         if (password_verify($password, $user['password'])) {
             $valid = true;
@@ -84,6 +83,16 @@ switch ($action) {
             break;
         }
 
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(['success' => false, 'message' => 'Ingresa un correo valido']);
+            break;
+        }
+
+        if (emailExists($conn, $email)) {
+            echo json_encode(['success' => false, 'message' => 'El correo ya esta registrado']);
+            break;
+        }
+
         $hasUpper = preg_match('/[A-Z]/', $password);
         $hasNumber = preg_match('/\d/', $password);
         $hasSpecial = preg_match('/[^A-Za-z0-9]/', $password);
@@ -93,15 +102,6 @@ switch ($action) {
                 'success' => false,
                 'message' => 'La contrasena debe tener al menos 8 caracteres e incluir una mayuscula, un numero y un caracter especial',
             ]);
-            break;
-        }
-
-        $stmt = $conn->prepare('SELECT id FROM usuarios WHERE email = ?');
-        $stmt->bind_param('s', $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($result && $result->num_rows > 0) {
-            echo json_encode(['success' => false, 'message' => 'El correo ya esta registrado']);
             break;
         }
 
@@ -128,6 +128,7 @@ switch ($action) {
         }
 
         $newUserId = $stmt->insert_id;
+        appAssignUserRole($conn, $newUserId, 'cliente');
         $_SESSION['user_id'] = $newUserId;
         $_SESSION['user_nombre'] = $nombre;
         $_SESSION['user_email'] = $email;
@@ -158,11 +159,7 @@ switch ($action) {
             break;
         }
 
-        $stmt = $conn->prepare('SELECT id, nombre, email, rol, theme_preference FROM usuarios WHERE id = ?');
-        $stmt->bind_param('i', $_SESSION['user_id']);
-        $stmt->execute();
-        $user = $stmt->get_result()->fetch_assoc();
-
+        $user = appGetUserById($conn, (int) $_SESSION['user_id']);
         if (!$user) {
             $_SESSION = [];
             session_destroy();

@@ -15,7 +15,7 @@ $action = $_GET['action'] ?? 'list';
 switch ($action) {
     case 'list':
         // Listar pedidos del usuario
-        $sql = "SELECT p.id, p.total, p.estado, p.fecha_pedido 
+        $sql = "SELECT p.id, p.numero_pedido, p.subtotal, p.total, p.estado, p.fecha_pedido 
                 FROM pedidos p 
                 WHERE p.usuario_id = ? 
                 ORDER BY p.fecha_pedido DESC";
@@ -28,9 +28,15 @@ switch ($action) {
         while ($row = $result->fetch_assoc()) {
             // Para cada pedido, obtener sus productos
             $pedido_id = $row['id'];
-            $sql_detalles = "SELECT d.cantidad, d.precio_unitario, pr.nombre, pr.imagen, pr.id as producto_id
+            $sql_detalles = "SELECT
+                                d.cantidad,
+                                d.precio_unitario,
+                                d.subtotal,
+                                COALESCE(pr.nombre, d.producto_nombre) AS nombre,
+                                COALESCE(pr.imagen, d.producto_imagen) AS imagen,
+                                d.producto_id
                              FROM detalles_pedido d 
-                             INNER JOIN productos pr ON d.producto_id = pr.id 
+                             LEFT JOIN productos pr ON d.producto_id = pr.id 
                              WHERE d.pedido_id = ?";
             $stmt_det = $conn->prepare($sql_detalles);
             $stmt_det->bind_param("i", $pedido_id);

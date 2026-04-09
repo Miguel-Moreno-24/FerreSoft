@@ -37,7 +37,7 @@ switch ($action) {
         break;
 
     case 'list_pedidos':
-        $sql = "SELECT p.id, p.total, p.estado, p.fecha_pedido, u.nombre as usuario_nombre, u.email as usuario_email 
+        $sql = "SELECT p.id, p.numero_pedido, p.subtotal, p.total, p.estado, p.fecha_pedido, u.nombre as usuario_nombre, u.email as usuario_email 
                 FROM pedidos p 
                 INNER JOIN usuarios u ON p.usuario_id = u.id 
                 ORDER BY p.fecha_pedido DESC";
@@ -45,9 +45,9 @@ switch ($action) {
         $pedidos = [];
         while ($row = mysqli_fetch_assoc($res)) {
             $pedido_id = $row['id'];
-            $sql_det = "SELECT d.cantidad, pr.nombre 
+            $sql_det = "SELECT d.cantidad, COALESCE(pr.nombre, d.producto_nombre) AS nombre
                         FROM detalles_pedido d 
-                        INNER JOIN productos pr ON d.producto_id = pr.id 
+                        LEFT JOIN productos pr ON d.producto_id = pr.id 
                         WHERE d.pedido_id = ?";
             $stmt = $conn->prepare($sql_det);
             $stmt->bind_param("i", $pedido_id);
@@ -76,7 +76,19 @@ switch ($action) {
         break;
 
     case 'list_usuarios':
-        $res = mysqli_query($conn, "SELECT id, nombre, email, rol, fecha_registro FROM usuarios ORDER BY id DESC");
+        $res = mysqli_query($conn, "
+            SELECT
+                u.id,
+                u.nombre,
+                u.email,
+                COALESCE(MIN(r.nombre), u.rol, 'cliente') AS rol,
+                u.fecha_registro
+            FROM usuarios u
+            LEFT JOIN usuario_roles ur ON ur.usuario_id = u.id
+            LEFT JOIN roles r ON r.id = ur.rol_id
+            GROUP BY u.id, u.nombre, u.email, u.rol, u.fecha_registro
+            ORDER BY u.id DESC
+        ");
         $usuarios = [];
         while ($row = mysqli_fetch_assoc($res)) {
             $usuarios[] = $row;
