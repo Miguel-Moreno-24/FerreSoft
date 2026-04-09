@@ -4,6 +4,7 @@ require_once '../models/AppDb.php';
 
 header('Content-Type: application/json');
 
+$maxNameLength = 60;
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'Debes iniciar sesion']);
     exit;
@@ -59,6 +60,8 @@ switch ($action) {
 
         if ($nombre === '') {
             $errors[] = 'El nombre es requerido';
+        } elseif (mb_strlen($nombre) > $maxNameLength) {
+            $errors[] = 'El nombre no puede superar los 60 caracteres';
         } elseif (!preg_match('/^[\\p{L}\\s\'-]+$/u', $nombre)) {
             $errors[] = 'El nombre solo puede contener letras y espacios';
         }
@@ -80,7 +83,7 @@ switch ($action) {
             $errors[] = 'El telefono debe contener entre 7 y 20 caracteres numericos';
         }
 
-        if ($ciudad !== '' && !preg_match('/^[\\p{L}0-9\\s.,#-]{2,120}$/u', $ciudad)) {
+        if ($ciudad !== '' && !preg_match('/^[A-Za-zÃÃ‰ÃÃ“ÃšÃ¡Ã©Ã­Ã³ÃºÃ‘Ã±0-9\s.,#-]{2,120}$/u', $ciudad)) {
             $errors[] = 'La ciudad contiene caracteres no permitidos';
         }
 

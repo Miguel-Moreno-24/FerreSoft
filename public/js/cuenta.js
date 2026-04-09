@@ -13,11 +13,12 @@ function validateAccountForm() {
   const nombre = document.getElementById("nombre").value.trim()
   const email = document.getElementById("email").value.trim()
   const tipoDocumento = document.getElementById("tipo_documento").value.trim()
+  if (nombre.length > 60) return "El nombre no puede superar los 60 caracteres"
   const numeroDocumento = document.getElementById("numero_documento").value.trim()
   const telefono = document.getElementById("telefono").value.trim()
 
   if (!nombre) return "Debes ingresar tu nombre"
-  if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s'-]+$/u.test(nombre)) return "El nombre solo puede contener letras y espacios"
+  if (!/^[A-Za-zÃÃ‰ÃÃ“ÃšÃ¡Ã©Ã­Ã³ÃºÃ‘Ã±\s'-]+$/u.test(nombre)) return "El nombre solo puede contener letras y espacios"
 
   if (!email) return "Debes ingresar un correo electronico"
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Ingresa un correo valido"
@@ -73,7 +74,7 @@ document.getElementById("account-form")?.addEventListener("submit", async (e) =>
     return
   }
 
-  showConfirm("¿Guardar cambios en tu cuenta?", async () => {
+  showConfirm("Â¿Guardar cambios en tu cuenta?", async () => {
     const formData = new FormData()
     formData.append("nombre", document.getElementById("nombre").value.trim())
     formData.append("email", document.getElementById("email").value.trim())
