@@ -117,14 +117,6 @@ switch ($action) {
 
         $hashed = password_hash($password, PASSWORD_DEFAULT);
 
-        $countResult = mysqli_query($conn, 'SELECT COUNT(*) AS c FROM usuarios');
-        if ($countResult) {
-            $countRow = mysqli_fetch_assoc($countResult);
-            if (isset($countRow['c']) && intval($countRow['c']) === 0) {
-                mysqli_query($conn, 'ALTER TABLE usuarios AUTO_INCREMENT = 1');
-            }
-        }
-
         $stmt = $conn->prepare("INSERT INTO usuarios (nombre, email, password, rol, theme_preference, language_preference) VALUES (?, ?, ?, 'cliente', 'light', 'es')");
         $stmt->bind_param('sss', $nombre, $email, $hashed);
 

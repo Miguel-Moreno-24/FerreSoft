@@ -1,4 +1,4 @@
-﻿let currentUser = null
+let currentUser = null
 const THEME_STORAGE_KEY = 'ferresoft.theme'
 const LANGUAGE_STORAGE_KEY = 'ferresoft.language'
 
@@ -95,6 +95,402 @@ const translations = {
   },
 }
 
+const pageTranslations = {
+  'index.html': {
+    es: {
+      title: 'FerreSoft - Ferretería Online',
+      header: 'FerreSoft - Tu Ferretería de Confianza',
+      welcome: 'Bienvenidos a FerreSoft',
+      subtitle: 'Las mejores herramientas para tus proyectos',
+      products: 'Nuestros Productos',
+    },
+    en: {
+      title: 'FerreSoft - Hardware Store',
+      header: 'FerreSoft - Your Trusted Hardware Store',
+      welcome: 'Welcome to FerreSoft',
+      subtitle: 'The best tools for your projects',
+      products: 'Our Products',
+    },
+  },
+  'login.html': {
+    es: {
+      title: 'Login - FerreSoft',
+      back: 'Volver a la Tienda',
+      loginTitle: 'Iniciar Sesión',
+      registerTitle: 'Registrarse',
+      loginSubmit: 'Iniciar Sesión',
+      registerSubmit: 'Registrarse',
+      noAccount: '¿No tienes cuenta?',
+      haveAccount: '¿Ya tienes cuenta?',
+      goRegister: 'Regístrate',
+      goLogin: 'Iniciar Sesión',
+      namePlaceholder: 'Nombre completo',
+      emailPlaceholder: 'Correo electrónico',
+      passwordPlaceholder: 'Contraseña',
+    },
+    en: {
+      title: 'Login - FerreSoft',
+      back: 'Back to Store',
+      loginTitle: 'Log In',
+      registerTitle: 'Sign Up',
+      loginSubmit: 'Log In',
+      registerSubmit: 'Sign Up',
+      noAccount: "Don't have an account?",
+      haveAccount: 'Already have an account?',
+      goRegister: 'Sign Up',
+      goLogin: 'Log In',
+      namePlaceholder: 'Full name',
+      emailPlaceholder: 'Email address',
+      passwordPlaceholder: 'Password',
+    },
+  },
+  'carrito.html': {
+    es: {
+      title: 'Carrito - FerreSoft',
+      header: 'FerreSoft - Carrito de Compras',
+      back: 'Volver a la Tienda',
+      main: 'Tu Carrito',
+      clear: 'Vaciar Carrito',
+      continue: 'Continuar con el Pago',
+    },
+    en: {
+      title: 'Cart - FerreSoft',
+      header: 'FerreSoft - Shopping Cart',
+      back: 'Back to Store',
+      main: 'Your Cart',
+      clear: 'Empty Cart',
+      continue: 'Continue to Payment',
+    },
+  },
+  'historial.html': {
+    es: {
+      title: 'Historial de Compras - FerreSoft',
+      header: 'FerreSoft - Mi Historial',
+      back: 'Volver a la Tienda',
+      main: 'Historial de Compras',
+      description: 'Consulta tus pedidos anteriores, abre la factura o vuelve a ver cualquier producto desde la tienda principal.',
+    },
+    en: {
+      title: 'Purchase History - FerreSoft',
+      header: 'FerreSoft - My History',
+      back: 'Back to Store',
+      main: 'Purchase History',
+      description: 'Review your previous orders, open the invoice, or go back to any product from the main store.',
+    },
+  },
+  'pago.html': {
+    es: {
+      title: 'Pago - FerreSoft',
+      header: 'FerreSoft - Proceso de Pago',
+      back: 'Volver al Carrito',
+      deliveryTitle: 'Datos de entrega',
+      deliveryDesc: 'Completa los datos necesarios para confirmar tu compra.',
+      name: 'Nombre',
+      email: 'Correo',
+      phone: 'Teléfono',
+      city: 'Ciudad de entrega',
+      cityPlaceholder: 'Ej: Bogotá',
+      address: 'Dirección de entrega',
+      addressPlaceholder: 'Calle, número, barrio y referencia',
+      paymentMethod: 'Método de pago',
+      paymentReference: 'Referencia de pago',
+      referencePlaceholder: 'Últimos 4 dígitos o código',
+      paymentHelp: 'Para contraentrega puedes dejarlo vacío.',
+      summaryTitle: 'Resumen del pedido',
+      summaryDesc: 'Revisa los productos antes de pagar.',
+      total: 'Total',
+      confirm: 'Confirmar Pago',
+      cancel: 'Cancelar',
+      optionSelect: 'Selecciona una opción',
+      optionCard: 'Tarjeta débito o crédito',
+      optionTransfer: 'Transferencia bancaria',
+      optionDelivery: 'Pago contraentrega',
+    },
+    en: {
+      title: 'Payment - FerreSoft',
+      header: 'FerreSoft - Payment Process',
+      back: 'Back to Cart',
+      deliveryTitle: 'Delivery Details',
+      deliveryDesc: 'Complete the required details to confirm your purchase.',
+      name: 'Name',
+      email: 'Email',
+      phone: 'Phone',
+      city: 'Delivery City',
+      cityPlaceholder: 'Example: Bogota',
+      address: 'Delivery Address',
+      addressPlaceholder: 'Street, number, neighborhood and notes',
+      paymentMethod: 'Payment Method',
+      paymentReference: 'Payment Reference',
+      referencePlaceholder: 'Last 4 digits or code',
+      paymentHelp: 'For cash on delivery you can leave this empty.',
+      summaryTitle: 'Order Summary',
+      summaryDesc: 'Review your products before paying.',
+      total: 'Total',
+      confirm: 'Confirm Payment',
+      cancel: 'Cancel',
+      optionSelect: 'Select an option',
+      optionCard: 'Debit or credit card',
+      optionTransfer: 'Bank transfer',
+      optionDelivery: 'Cash on delivery',
+    },
+  },
+  'factura.html': {
+    es: {
+      title: 'Factura - FerreSoft',
+      header: 'FerreSoft - Factura Digital',
+      back: 'Ir al Historial',
+      tag: 'Comprobante Digital',
+      brand: 'Tienda de herramientas',
+      customer: 'Cliente',
+      delivery: 'Entrega',
+      payment: 'Pago',
+      product: 'Producto',
+      quantity: 'Cantidad',
+      unitPrice: 'Precio unitario',
+      subtotal: 'Subtotal',
+      total: 'Total',
+      backStore: 'Volver a la tienda',
+      print: 'Imprimir o guardar',
+    },
+    en: {
+      title: 'Invoice - FerreSoft',
+      header: 'FerreSoft - Digital Invoice',
+      back: 'Go to History',
+      tag: 'Digital Receipt',
+      brand: 'Tool store',
+      customer: 'Customer',
+      delivery: 'Delivery',
+      payment: 'Payment',
+      product: 'Product',
+      quantity: 'Quantity',
+      unitPrice: 'Unit price',
+      subtotal: 'Subtotal',
+      total: 'Total',
+      backStore: 'Back to store',
+      print: 'Print or save',
+    },
+  },
+  'configuracion.html': {
+    es: {
+      title: 'Configuración - FerreSoft',
+      header: 'FerreSoft - Configuración',
+      back: 'Volver a la Tienda',
+      main: 'Configuración',
+      themeTitle: 'Preferencia de Tema',
+      themeDesc: 'Elige el estilo visual de la página:',
+      themeLight: 'Claro',
+      themeDark: 'Oscuro',
+      languageTitle: 'Idioma del Sistema',
+      languageLabel: 'Idioma',
+      languageHelp: 'El idioma se guarda por usuario y se aplica al volver a iniciar sesión.',
+      securityTitle: 'Seguridad',
+      newPassword: 'Nueva Contraseña',
+      newPasswordPlaceholder: 'Mínimo 8 caracteres',
+      passwordHelp: 'Debe incluir mayúscula, número y carácter especial.',
+      confirmPassword: 'Confirmar Contraseña',
+      confirmPasswordPlaceholder: 'Repite la contraseña',
+      updatePassword: 'Actualizar Contraseña',
+    },
+    en: {
+      title: 'Settings - FerreSoft',
+      header: 'FerreSoft - Settings',
+      back: 'Back to Store',
+      main: 'Settings',
+      themeTitle: 'Theme Preference',
+      themeDesc: 'Choose the visual style of the page:',
+      themeLight: 'Light',
+      themeDark: 'Dark',
+      languageTitle: 'System Language',
+      languageLabel: 'Language',
+      languageHelp: 'The language is saved per user and applied again when signing in.',
+      securityTitle: 'Security',
+      newPassword: 'New Password',
+      newPasswordPlaceholder: 'At least 8 characters',
+      passwordHelp: 'It must include an uppercase letter, a number, and a special character.',
+      confirmPassword: 'Confirm Password',
+      confirmPasswordPlaceholder: 'Repeat the password',
+      updatePassword: 'Update Password',
+    },
+  },
+  'cuenta.html': {
+    es: {
+      title: 'Mi Cuenta - FerreSoft',
+      header: 'FerreSoft - Mi Cuenta',
+      back: 'Volver a la Tienda',
+      main: 'Mi Cuenta',
+      subtitle: 'Actualiza tu información personal',
+      save: 'Guardar Cambios',
+      cancel: 'Cancelar',
+    },
+    en: {
+      title: 'My Account - FerreSoft',
+      header: 'FerreSoft - My Account',
+      back: 'Back to Store',
+      main: 'My Account',
+      subtitle: 'Update your personal information',
+      save: 'Save Changes',
+      cancel: 'Cancel',
+    },
+  },
+  'admin.html': {
+    es: {
+      title: 'Panel de Administración - FerreSoft',
+      header: 'Panel de Administración - FerreSoft',
+      store: 'Ver Tienda',
+      sections: 'Secciones',
+      dashboard: 'Resumen',
+      products: 'Productos',
+      orders: 'Pedidos',
+      users: 'Usuarios',
+    },
+    en: {
+      title: 'Admin Panel - FerreSoft',
+      header: 'Admin Panel - FerreSoft',
+      store: 'View Store',
+      sections: 'Sections',
+      dashboard: 'Overview',
+      products: 'Products',
+      orders: 'Orders',
+      users: 'Users',
+    },
+  },
+}
+
+function getCurrentPageName() {
+  const parts = window.location.pathname.split('/')
+  return parts[parts.length - 1] || 'index.html'
+}
+
+function getPageTranslation(pageName) {
+  const language = getCurrentLanguage()
+  return pageTranslations[pageName]?.[language] || pageTranslations[pageName]?.es || null
+}
+
+function applyPageTranslations() {
+  const pageName = getCurrentPageName()
+  const copy = getPageTranslation(pageName)
+  if (!copy) return
+
+  document.title = copy.title || document.title
+
+  if (pageName === 'index.html') {
+    document.querySelector('header h1').textContent = copy.header
+    document.querySelector('.hero h2').textContent = copy.welcome
+    document.querySelector('.hero p').textContent = copy.subtitle
+    document.querySelector('.productos h3').textContent = copy.products
+  } else if (pageName === 'login.html') {
+    const back = document.querySelector('.skip-login-btn')
+    const nameInput = document.getElementById('nombre')
+    const emailInput = document.getElementById('email')
+    const passwordInput = document.getElementById('password')
+    if (back) back.textContent = `\u2190 ${copy.back}`
+    if (nameInput) nameInput.placeholder = copy.namePlaceholder
+    if (emailInput) emailInput.placeholder = copy.emailPlaceholder
+    if (passwordInput) passwordInput.placeholder = copy.passwordPlaceholder
+  } else if (pageName === 'carrito.html') {
+    document.querySelector('header h1').textContent = copy.header
+    document.querySelector('.nav-link-light').textContent = copy.back
+    document.querySelector('.cart-container h2').textContent = copy.main
+    const buttons = document.querySelectorAll('.cart-actions .btn')
+    if (buttons[0]) buttons[0].textContent = copy.clear
+    if (buttons[1]) buttons[1].textContent = copy.continue
+  } else if (pageName === 'historial.html') {
+    document.querySelector('header h1').textContent = copy.header
+    document.querySelector('.nav-link-light').textContent = copy.back
+    document.querySelector('.history-header h2').textContent = copy.main
+    document.querySelector('.history-header p').textContent = copy.description
+  } else if (pageName === 'pago.html') {
+    document.querySelector('header h1').textContent = copy.header
+    document.querySelector('.nav-link-light').textContent = copy.back
+    const h2s = document.querySelectorAll('.section-header h2')
+    const ps = document.querySelectorAll('.section-header p')
+    if (h2s[0]) h2s[0].textContent = copy.deliveryTitle
+    if (ps[0]) ps[0].textContent = copy.deliveryDesc
+    if (h2s[1]) h2s[1].textContent = copy.summaryTitle
+    if (ps[1]) ps[1].textContent = copy.summaryDesc
+    const labels = document.querySelectorAll('#payment-form label')
+    if (labels[0]) labels[0].textContent = copy.name
+    if (labels[1]) labels[1].textContent = copy.email
+    if (labels[2]) labels[2].textContent = copy.phone
+    if (labels[3]) labels[3].textContent = copy.city
+    if (labels[4]) labels[4].textContent = copy.address
+    if (labels[5]) labels[5].textContent = copy.paymentMethod
+    if (labels[6]) labels[6].textContent = copy.paymentReference
+    document.getElementById('ciudad_entrega').placeholder = copy.cityPlaceholder
+    document.getElementById('direccion_entrega').placeholder = copy.addressPlaceholder
+    document.getElementById('referencia_pago').placeholder = copy.referencePlaceholder
+    const help = document.querySelector('#referencia_pago + small')
+    if (help) help.textContent = copy.paymentHelp
+    const options = document.querySelectorAll('#metodo_pago option')
+    if (options[0]) options[0].textContent = copy.optionSelect
+    if (options[1]) options[1].textContent = copy.optionCard
+    if (options[2]) options[2].textContent = copy.optionTransfer
+    if (options[3]) options[3].textContent = copy.optionDelivery
+    const totalLabel = document.querySelector('.checkout-total-box span')
+    if (totalLabel) totalLabel.textContent = copy.total
+    const formButtons = document.querySelectorAll('#payment-form .form-actions .btn')
+    if (formButtons[0]) formButtons[0].textContent = copy.confirm
+    if (formButtons[1]) formButtons[1].textContent = copy.cancel
+  } else if (pageName === 'factura.html') {
+    document.querySelector('header h1').textContent = copy.header
+    document.querySelector('.nav-link-light').textContent = copy.back
+    document.querySelector('.invoice-tag').textContent = copy.tag
+    document.querySelector('.invoice-brand span').textContent = copy.brand
+    const blocks = document.querySelectorAll('.invoice-block h3')
+    if (blocks[0]) blocks[0].textContent = copy.customer
+    if (blocks[1]) blocks[1].textContent = copy.delivery
+    if (blocks[2]) blocks[2].textContent = copy.payment
+    const ths = document.querySelectorAll('.invoice-table th')
+    if (ths[0]) ths[0].textContent = copy.product
+    if (ths[1]) ths[1].textContent = copy.quantity
+    if (ths[2]) ths[2].textContent = copy.unitPrice
+    if (ths[3]) ths[3].textContent = copy.subtotal
+    const totals = document.querySelectorAll('.invoice-total-box span')
+    if (totals[0]) totals[0].textContent = copy.subtotal
+    if (totals[1]) totals[1].textContent = copy.total
+    const buttons = document.querySelectorAll('.invoice-actions .btn')
+    if (buttons[0]) buttons[0].textContent = copy.backStore
+    if (buttons[1]) buttons[1].textContent = copy.print
+  } else if (pageName === 'configuracion.html') {
+    document.querySelector('header h1').textContent = copy.header
+    document.querySelector('.nav-link-light').textContent = copy.back
+    document.querySelector('.config-container h2').textContent = copy.main
+    const sectionTitles = document.querySelectorAll('.config-section h3')
+    if (sectionTitles[0]) sectionTitles[0].textContent = copy.themeTitle
+    if (sectionTitles[1]) sectionTitles[1].textContent = copy.languageTitle
+    if (sectionTitles[2]) sectionTitles[2].textContent = copy.securityTitle
+    document.querySelector('.theme-switch-wrapper p').textContent = copy.themeDesc
+    const themeSpans = document.querySelectorAll('.theme-option span')
+    if (themeSpans[0]) themeSpans[0].textContent = copy.themeLight
+    if (themeSpans[1]) themeSpans[1].textContent = copy.themeDark
+    document.querySelector('label[for="language"]').textContent = copy.languageLabel
+    document.querySelector('#language + small').textContent = copy.languageHelp
+    document.querySelector('label[for="new_password"]').textContent = copy.newPassword
+    document.getElementById('new_password').placeholder = copy.newPasswordPlaceholder
+    document.querySelector('#new_password + small').textContent = copy.passwordHelp
+    document.querySelector('label[for="confirm_password"]').textContent = copy.confirmPassword
+    document.getElementById('confirm_password').placeholder = copy.confirmPasswordPlaceholder
+    document.querySelector('#password-form button[type="submit"]').textContent = copy.updatePassword
+  } else if (pageName === 'cuenta.html') {
+    document.querySelector('header h1').textContent = copy.header
+    document.querySelector('.nav-link-light').textContent = copy.back
+    document.querySelector('.account-container h2').textContent = copy.main
+    document.querySelector('.account-subtitle').textContent = copy.subtitle
+    const buttons = document.querySelectorAll('.form-actions .btn')
+    if (buttons[0]) buttons[0].textContent = copy.save
+    if (buttons[1]) buttons[1].textContent = copy.cancel
+  } else if (pageName === 'admin.html') {
+    document.querySelector('header h1').textContent = copy.header
+    document.querySelector('.admin-top-link').textContent = copy.store
+    document.querySelector('.admin-sidebar h2').textContent = copy.sections
+    const sidebarButtons = document.querySelectorAll('.admin-sidebar-item')
+    if (sidebarButtons[0]) sidebarButtons[0].textContent = copy.dashboard
+    if (sidebarButtons[1]) sidebarButtons[1].textContent = copy.products
+    if (sidebarButtons[2]) sidebarButtons[2].textContent = copy.orders
+    if (sidebarButtons[3]) sidebarButtons[3].textContent = copy.users
+  }
+}
+
 function getStoredLanguage() {
   const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY)
   return stored === 'en' ? 'en' : 'es'
@@ -131,6 +527,7 @@ function setLanguage(language = 'es', persistLocal = true) {
     localStorage.setItem(LANGUAGE_STORAGE_KEY, normalized)
   }
   applyTranslations()
+  applyPageTranslations()
   document.dispatchEvent(new CustomEvent('idioma-cambiado', { detail: { language: normalized } }))
 }
 

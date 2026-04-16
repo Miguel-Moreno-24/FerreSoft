@@ -126,26 +126,6 @@ function toggleRecentOrder() {
   renderProducts(getFilteredProducts())
 }
 
-async function resetCounters() {
-  showConfirm("¿Reiniciar contadores vacios de productos y usuarios?", async () => {
-    try {
-      const response = await fetch("../controllers/productos.php?action=reset_ids", { method: "POST" })
-      const data = await response.json()
-      if (!data.success) {
-        showToast(data.message || "No se pudo reiniciar", "error")
-        return
-      }
-
-      showToast(data.message || "Contadores revisados", "success")
-      loadStats()
-      loadProducts()
-    } catch (error) {
-      console.error("Error reset counters:", error)
-      showToast("Error al reiniciar contadores", "error")
-    }
-  })
-}
-
 async function loadPedidos() {
   const tbody = document.getElementById("pedidos-table")
   if (!tbody) return
@@ -226,7 +206,7 @@ async function loadUsuarios() {
 }
 
 async function deleteUsuario(id) {
-  showConfirm("¿Seguro que deseas eliminar este usuario?", async () => {
+  showConfirm("Â¿Seguro que deseas eliminar este usuario?", async () => {
     const formData = new FormData()
     formData.append("id", id)
 
@@ -282,7 +262,7 @@ function editProduct(id) {
 }
 
 async function deleteProduct(id) {
-  showConfirm("¿Seguro que deseas eliminar este producto?", async () => {
+  showConfirm("Â¿Seguro que deseas eliminar este producto?", async () => {
     const formData = new FormData()
     formData.append("id", id)
 

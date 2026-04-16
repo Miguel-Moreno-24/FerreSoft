@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 header('Content-Type: application/json');
@@ -138,8 +139,17 @@ switch ($action) {
             break;
         }
 
-        $stmt = $conn->prepare("INSERT INTO productos (nombre, descripcion, precio, stock, imagen) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssdis", $nombre, $descripcion, $precio, $stock, $imagen);
+// Get next ID based on existing products
+        $maxResult = mysqli_query($conn, "SELECT COALESCE(MAX(id), 0) as max_id FROM productos");
+        if (!$maxResult) {
+            echo json_encode(['success' => false, 'message' => 'Error getting max ID: ' . mysqli_error($conn)]);
+            break;
+        }
+        $maxRow = mysqli_fetch_assoc($maxResult);
+        $new_id = (int)$maxRow['max_id'] + 1;
+
+        $stmt = $conn->prepare("INSERT INTO productos (id, nombre, descripcion, precio, stock, imagen) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("issdis", $new_id, $nombre, $descripcion, $precio, $stock, $imagen);
 
         if ($stmt->execute()) {
             echo json_encode(['success' => true, 'message' => 'Producto agregado']);
@@ -209,31 +219,6 @@ switch ($action) {
         } else {
             echo json_encode(['success' => false, 'message' => 'Error al eliminar producto']);
         }
-        break;
-        
-    case 'reset_ids':
-        if (!isset($_SESSION['user_rol']) || $_SESSION['user_rol'] !== 'admin') {
-            echo json_encode(['success' => false, 'message' => 'No autorizado']);
-            break;
-        }
-        
-        $resProd = mysqli_query($conn, "SELECT COUNT(*) as c FROM productos");
-        $countProd = mysqli_fetch_assoc($resProd)['c'];
-        
-        $resUser = mysqli_query($conn, "SELECT COUNT(*) as c FROM usuarios");
-        $countUser = mysqli_fetch_assoc($resUser)['c'];
-        
-        $msg = "";
-        if ($countProd == 0) {
-            mysqli_query($conn, "ALTER TABLE productos AUTO_INCREMENT = 1");
-            $msg .= "Productos reset. ";
-        }
-        if ($countUser == 0) {
-            mysqli_query($conn, "ALTER TABLE usuarios AUTO_INCREMENT = 1");
-            $msg .= "Usuarios reset. ";
-        }
-        
-        echo json_encode(['success' => true, 'message' => $msg ?: "Nada que reiniciar"]);
         break;
 
     default:

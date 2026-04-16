@@ -1,4 +1,4 @@
-﻿function formatearFecha(fecha) {
+function formatearFecha(fecha) {
   const language = getCurrentLanguage()
   return new Date(fecha).toLocaleDateString(language === 'en' ? 'en-US' : 'es-CO', {
     year: 'numeric',
@@ -7,7 +7,34 @@
   })
 }
 
+function textosHistorial() {
+  return getCurrentLanguage() === 'en'
+    ? {
+        empty: 'You have not made any purchases yet.',
+        buy: 'Start Shopping',
+        viewStore: 'View in Store',
+        viewInvoice: 'View Invoice',
+        madeOn: 'Placed on',
+        quantity: 'Quantity',
+        total: 'Total',
+        loadError: 'Could not load the history',
+        connectionError: 'Error connecting to the server',
+      }
+    : {
+        empty: 'No has realizado ninguna compra todavía.',
+        buy: 'Ir a comprar',
+        viewStore: 'Ver en la tienda',
+        viewInvoice: 'Ver factura',
+        madeOn: 'Realizado el',
+        quantity: 'Cantidad',
+        total: 'Total',
+        loadError: 'No se pudo cargar el historial',
+        connectionError: 'Error al conectar con el servidor',
+      }
+}
+
 async function loadHistorial() {
+  const textos = textosHistorial()
   const container = document.getElementById('historial-container')
   if (!container) return
 
@@ -16,16 +43,16 @@ async function loadHistorial() {
     const data = await response.json()
 
     if (!data.success) {
-      showToast(data.message || 'Error al cargar el historial', 'error')
-      container.innerHTML = `<p class="error">${data.message || 'No se pudo cargar el historial'}</p>`
+      showToast(data.message || textos.loadError, 'error')
+      container.innerHTML = `<p class="error">${data.message || textos.loadError}</p>`
       return
     }
 
     if (data.pedidos.length === 0) {
       container.innerHTML = `
         <div class="no-pedidos">
-          <p>No has realizado ninguna compra todavía.</p>
-          <a href="index.html" class="btn btn-success" style="margin-top: 1rem;">Ir a comprar</a>
+          <p>${textos.empty}</p>
+          <a href="index.html" class="btn btn-success" style="margin-top: 1rem;">${textos.buy}</a>
         </div>
       `
       return
@@ -45,11 +72,11 @@ async function loadHistorial() {
             <img src="${resolveImagePath(producto.imagen)}" alt="${producto.nombre}">
             <div class="producto-info">
               <span class="producto-nombre">${producto.nombre}</span>
-              <span class="producto-detalle">Cantidad: ${producto.cantidad} x $${Number(producto.precio_unitario).toFixed(2)}</span>
+              <span class="producto-detalle">${textos.quantity}: ${producto.cantidad} x $${Number(producto.precio_unitario).toFixed(2)}</span>
             </div>
             <div class="historial-item-actions">
-              <a href="${destino}" class="btn">Ver en la tienda</a>
-              <a href="factura.html?id=${pedido.id}" class="btn btn-success">Ver factura</a>
+              <a href="${destino}" class="btn">${textos.viewStore}</a>
+              <a href="factura.html?id=${pedido.id}" class="btn btn-success">${textos.viewInvoice}</a>
             </div>
           </div>
         `
@@ -59,7 +86,7 @@ async function loadHistorial() {
         <div class="pedido-header">
           <div class="pedido-info">
             <h3>${pedido.numero_pedido || `Pedido #${pedido.id}`}</h3>
-            <span class="pedido-fecha">Realizado el ${formatearFecha(pedido.fecha_pedido)}</span>
+            <span class="pedido-fecha">${textos.madeOn} ${formatearFecha(pedido.fecha_pedido)}</span>
           </div>
           <span class="pedido-estado ${estadoClase}">${pedido.estado}</span>
         </div>
@@ -67,7 +94,7 @@ async function loadHistorial() {
           ${productosHTML}
         </div>
         <div class="pedido-total">
-          Total: $${Number(pedido.total).toFixed(2)}
+          ${textos.total}: $${Number(pedido.total).toFixed(2)}
         </div>
       `
 
@@ -75,10 +102,14 @@ async function loadHistorial() {
     })
   } catch (error) {
     console.error('Error cargando el historial:', error)
-    container.innerHTML = '<p class="error">Error al conectar con el servidor</p>'
+    container.innerHTML = `<p class="error">${textos.connectionError}</p>`
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  loadHistorial()
+})
+
+document.addEventListener('idioma-cambiado', () => {
   loadHistorial()
 })
