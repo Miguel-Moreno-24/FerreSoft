@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago - FerreSoft</title>
+    <link rel="stylesheet" href="../public/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <h1>FerreSoft - Proceso de Pago</h1>
+            <div class="nav-links">
+                <a href="carrito.html" class="nav-link-light">Volver al Carrito</a>
+                <div class="user-menu-wrapper">
+                    <button id="user-menu-btn" class="user-menu-btn">
+                        <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span id="user-menu-name">Usuario</span>
+                    </button>
+                    <div id="user-menu" class="user-menu hidden"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container payment-page">
+        <section class="checkout-layout">
+            <article class="checkout-card">
+                <div class="section-header">
+                    <h2>Datos de entrega</h2>
+                    <p>Completa los datos necesarios para confirmar tu compra.</p>
+                </div>
+
+                <form id="payment-form" class="checkout-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nombre_cliente">Nombre</label>
+                            <input type="text" id="nombre_cliente" name="nombre_cliente" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="correo_cliente">Correo</label>
+                            <input type="email" id="correo_cliente" name="correo_cliente" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="telefono_cliente">Teléfono</label>
+                            <input type="text" id="telefono_cliente" name="telefono_cliente" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="ciudad_entrega">Ciudad de entrega</label>
+                            <input type="text" id="ciudad_entrega" name="ciudad_entrega" placeholder="Ej: Bogotá" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="direccion_entrega">Dirección de entrega</label>
+                        <textarea id="direccion_entrega" name="direccion_entrega" rows="3" placeholder="Calle, número, barrio y referencia" required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="metodo_pago">Método de pago</label>
+                            <select id="metodo_pago" name="metodo_pago" required>
+                                <option value="">Selecciona una opción</option>
+                                <option value="tarjeta">Tarjeta débito o crédito</option>
+                                <option value="transferencia">Transferencia bancaria</option>
+                                <option value="contraentrega">Pago contraentrega</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="referencia_pago">Referencia de pago</label>
+                            <input type="text" id="referencia_pago" name="referencia_pago" placeholder="Últimos 4 dígitos o código" maxlength="80">
+                            <small class="admin-field-help">Para contraentrega puedes dejarlo vacío.</small>
+                        </div>
+                    </div>
+
+                    <div id="payment-message" class="form-message" style="display:none;"></div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Confirmar Pago</button>
+                        <button type="button" class="btn" onclick="window.location.href='carrito.html'">Cancelar</button>
+                    </div>
+                </form>
+            </article>
+
+            <aside class="checkout-card checkout-summary-card">
+                <div class="section-header">
+                    <h2>Resumen del pedido</h2>
+                    <p>Revisa los productos antes de pagar.</p>
+                </div>
+                <div id="checkout-items" class="checkout-summary-list">
+                    <p class="loading">Cargando...</p>
+                </div>
+                <div class="checkout-total-box">
+                    <span>Total</span>
+                    <strong>$<span id="checkout-total">0.00</span></strong>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 FerreSoft. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="../public/js/script.js"></script>
+    <script src="../public/js/pago.js"></script>
+</body>
+</html>

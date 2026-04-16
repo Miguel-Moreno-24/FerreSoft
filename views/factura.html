@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura - FerreSoft</title>
+    <link rel="stylesheet" href="../public/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <h1>FerreSoft - Factura Digital</h1>
+            <div class="nav-links">
+                <a href="historial.html" class="nav-link-light">Ir al Historial</a>
+                <div class="user-menu-wrapper">
+                    <button id="user-menu-btn" class="user-menu-btn">
+                        <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span id="user-menu-name">Usuario</span>
+                    </button>
+                    <div id="user-menu" class="user-menu hidden"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container invoice-page">
+        <section class="invoice-card" id="invoice-card">
+            <div class="invoice-header">
+                <div>
+                    <span class="invoice-tag">Comprobante Digital</span>
+                    <h2 id="invoice-number">Factura</h2>
+                    <p id="invoice-date">Fecha</p>
+                </div>
+                <div class="invoice-brand">
+                    <strong>FerreSoft</strong>
+                    <span>Tienda de herramientas</span>
+                </div>
+            </div>
+
+            <div class="invoice-grid">
+                <div class="invoice-block">
+                    <h3>Cliente</h3>
+                    <p id="invoice-customer-name">-</p>
+                    <p id="invoice-customer-email">-</p>
+                </div>
+                <div class="invoice-block">
+                    <h3>Entrega</h3>
+                    <p id="invoice-address">-</p>
+                    <p id="invoice-city">-</p>
+                </div>
+                <div class="invoice-block">
+                    <h3>Pago</h3>
+                    <p id="invoice-method">-</p>
+                    <p id="invoice-reference">-</p>
+                </div>
+            </div>
+
+            <div class="invoice-table-wrap">
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoice-items">
+                        <tr>
+                            <td colspan="4" class="loading">Cargando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="invoice-total-box">
+                <div>
+                    <span>Subtotal</span>
+                    <strong id="invoice-subtotal">$0.00</strong>
+                </div>
+                <div>
+                    <span>Total</span>
+                    <strong id="invoice-total">$0.00</strong>
+                </div>
+            </div>
+
+            <div class="form-actions invoice-actions">
+                <button type="button" class="btn" onclick="window.location.href='index.html'">Volver a la tienda</button>
+                <button type="button" class="btn btn-success" onclick="window.print()">Imprimir o guardar</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 FerreSoft. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="../public/js/script.js"></script>
+    <script src="../public/js/factura.js"></script>
+</body>
+</html>

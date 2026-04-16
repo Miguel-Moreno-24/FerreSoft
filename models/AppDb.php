@@ -76,6 +76,7 @@ function appEnsureUsuariosTable(mysqli $conn): void
             tipo_documento VARCHAR(60) DEFAULT NULL,
             numero_documento VARCHAR(30) DEFAULT NULL,
             theme_preference ENUM('light', 'dark') NOT NULL DEFAULT 'light',
+            language_preference ENUM('es', 'en') NOT NULL DEFAULT 'es',
             password VARCHAR(255) NOT NULL,
             rol ENUM('admin', 'cliente') NOT NULL DEFAULT 'cliente',
             fecha_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -90,6 +91,7 @@ function appEnsureUsuariosTable(mysqli $conn): void
     appEnsureColumn($conn, 'usuarios', 'tipo_documento', '`tipo_documento` VARCHAR(60) NULL DEFAULT NULL AFTER `direccion`');
     appEnsureColumn($conn, 'usuarios', 'numero_documento', '`numero_documento` VARCHAR(30) NULL DEFAULT NULL AFTER `tipo_documento`');
     appEnsureColumn($conn, 'usuarios', 'theme_preference', "`theme_preference` ENUM('light','dark') NOT NULL DEFAULT 'light' AFTER `numero_documento`");
+    appEnsureColumn($conn, 'usuarios', 'language_preference', "`language_preference` ENUM('es','en') NOT NULL DEFAULT 'es' AFTER `theme_preference`");
     appEnsureColumn($conn, 'usuarios', 'rol', "`rol` ENUM('admin','cliente') NOT NULL DEFAULT 'cliente' AFTER `password`");
     appEnsureColumn($conn, 'usuarios', 'fecha_registro', '`fecha_registro` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `rol`');
 }
@@ -215,6 +217,12 @@ function appEnsurePedidosTable(mysqli $conn): void
             id INT AUTO_INCREMENT PRIMARY KEY,
             numero_pedido VARCHAR(30) DEFAULT NULL UNIQUE,
             usuario_id INT NOT NULL,
+            nombre_cliente VARCHAR(120) DEFAULT NULL,
+            correo_cliente VARCHAR(120) DEFAULT NULL,
+            direccion_entrega VARCHAR(180) DEFAULT NULL,
+            ciudad_entrega VARCHAR(120) DEFAULT NULL,
+            metodo_pago VARCHAR(50) DEFAULT NULL,
+            referencia_pago VARCHAR(80) DEFAULT NULL,
             subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
             total DECIMAL(10,2) NOT NULL DEFAULT 0,
             estado ENUM('Pendiente', 'Pagado', 'Enviado', 'Entregado', 'Cancelado') NOT NULL DEFAULT 'Pendiente',
@@ -228,7 +236,13 @@ function appEnsurePedidosTable(mysqli $conn): void
     appEnsureEngine($conn, 'pedidos');
     appEnsureTableCollation($conn, 'pedidos');
     appEnsureColumn($conn, 'pedidos', 'numero_pedido', '`numero_pedido` VARCHAR(30) NULL UNIQUE AFTER `id`');
-    appEnsureColumn($conn, 'pedidos', 'subtotal', '`subtotal` DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER `usuario_id`');
+    appEnsureColumn($conn, 'pedidos', 'nombre_cliente', '`nombre_cliente` VARCHAR(120) NULL DEFAULT NULL AFTER `usuario_id`');
+    appEnsureColumn($conn, 'pedidos', 'correo_cliente', '`correo_cliente` VARCHAR(120) NULL DEFAULT NULL AFTER `nombre_cliente`');
+    appEnsureColumn($conn, 'pedidos', 'direccion_entrega', '`direccion_entrega` VARCHAR(180) NULL DEFAULT NULL AFTER `correo_cliente`');
+    appEnsureColumn($conn, 'pedidos', 'ciudad_entrega', '`ciudad_entrega` VARCHAR(120) NULL DEFAULT NULL AFTER `direccion_entrega`');
+    appEnsureColumn($conn, 'pedidos', 'metodo_pago', '`metodo_pago` VARCHAR(50) NULL DEFAULT NULL AFTER `ciudad_entrega`');
+    appEnsureColumn($conn, 'pedidos', 'referencia_pago', '`referencia_pago` VARCHAR(80) NULL DEFAULT NULL AFTER `metodo_pago`');
+    appEnsureColumn($conn, 'pedidos', 'subtotal', '`subtotal` DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER `referencia_pago`');
     appEnsureColumn($conn, 'pedidos', 'fecha_actualizacion', '`fecha_actualizacion` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `fecha_pedido`');
 
     if (!appConstraintExists($conn, 'pedidos', 'fk_pedidos_usuario')) {
@@ -305,6 +319,24 @@ function appBackfillPedidosTotals(mysqli $conn): void
         UPDATE pedidos
         SET subtotal = total
         WHERE subtotal IS NULL OR subtotal = 0
+    ");
+}
+
+function appBackfillPedidoSnapshots(mysqli $conn): void
+{
+    if (!appColumnExists($conn, 'pedidos', 'nombre_cliente')) {
+        return;
+    }
+
+    mysqli_query($conn, "
+        UPDATE pedidos p
+        INNER JOIN usuarios u ON u.id = p.usuario_id
+        SET
+            p.nombre_cliente = COALESCE(NULLIF(p.nombre_cliente, ''), u.nombre),
+            p.correo_cliente = COALESCE(NULLIF(p.correo_cliente, ''), u.email),
+            p.direccion_entrega = COALESCE(NULLIF(p.direccion_entrega, ''), u.direccion),
+            p.ciudad_entrega = COALESCE(NULLIF(p.ciudad_entrega, ''), u.ciudad),
+            p.metodo_pago = COALESCE(NULLIF(p.metodo_pago, ''), 'Pago simulado')
     ");
 }
 
@@ -395,12 +427,13 @@ function appGetUserByEmail(mysqli $conn, string $email): ?array
             u.email,
             u.password,
             u.theme_preference,
+            u.language_preference,
             COALESCE(MIN(r.nombre), u.rol, 'cliente') AS rol
         FROM usuarios u
         LEFT JOIN usuario_roles ur ON ur.usuario_id = u.id
         LEFT JOIN roles r ON r.id = ur.rol_id
         WHERE u.email = ?
-        GROUP BY u.id, u.nombre, u.email, u.password, u.theme_preference, u.rol
+        GROUP BY u.id, u.nombre, u.email, u.password, u.theme_preference, u.language_preference, u.rol
         LIMIT 1
     ");
 
@@ -422,12 +455,13 @@ function appGetUserById(mysqli $conn, int $userId): ?array
             u.nombre,
             u.email,
             u.theme_preference,
+            u.language_preference,
             COALESCE(MIN(r.nombre), u.rol, 'cliente') AS rol
         FROM usuarios u
         LEFT JOIN usuario_roles ur ON ur.usuario_id = u.id
         LEFT JOIN roles r ON r.id = ur.rol_id
         WHERE u.id = ?
-        GROUP BY u.id, u.nombre, u.email, u.theme_preference, u.rol
+        GROUP BY u.id, u.nombre, u.email, u.theme_preference, u.language_preference, u.rol
         LIMIT 1
     ");
 
@@ -451,6 +485,7 @@ function appEnsureSchema(mysqli $conn): void
     appEnsureDetallesPedidoTable($conn);
     appEnsurePedidoNumbers($conn);
     appBackfillPedidosTotals($conn);
+    appBackfillPedidoSnapshots($conn);
     appBackfillDetallesPedidoSnapshots($conn);
     appSyncUserRoles($conn);
 }
