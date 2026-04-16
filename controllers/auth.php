@@ -2,7 +2,7 @@
 session_start();
 require_once '../models/AppDb.php';
 
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 
 $action = $_GET['action'] ?? '';
 $maxNameLength = 60;
@@ -15,6 +15,7 @@ function buildUserPayload(array $user): array
         'email' => $user['email'],
         'rol' => $user['rol'],
         'theme_preference' => $user['theme_preference'] ?? 'light',
+        'language_preference' => $user['language_preference'] ?? 'es',
     ];
 }
 
@@ -24,6 +25,14 @@ function emailExists(mysqli $conn, string $email): bool
 }
 
 switch ($action) {
+    case 'email_exists':
+        $email = trim($_GET['email'] ?? '');
+        echo json_encode([
+            'success' => true,
+            'exists' => $email !== '' && emailExists($conn, $email),
+        ]);
+        break;
+
     case 'login':
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
@@ -48,7 +57,7 @@ switch ($action) {
         }
 
         if (!$valid) {
-            echo json_encode(['success' => false, 'message' => 'Contrasena incorrecta']);
+            echo json_encode(['success' => false, 'message' => 'Contraseña incorrecta']);
             break;
         }
 
@@ -59,7 +68,7 @@ switch ($action) {
 
         echo json_encode([
             'success' => true,
-            'message' => 'Login exitoso',
+            'message' => 'Inicio de sesión exitoso',
             'user' => buildUserPayload($user),
         ]);
         break;
@@ -70,26 +79,27 @@ switch ($action) {
         $password = $_POST['password'] ?? '';
 
         if ($nombre === '' || $email === '' || $password === '') {
-            echo json_encode(['success' => false, 'message' => 'Todos los campos son requeridos']);
+            echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);
             break;
         }
+
         if (mb_strlen($nombre) > $maxNameLength) {
             echo json_encode(['success' => false, 'message' => 'El nombre no puede superar los 60 caracteres']);
             break;
         }
 
-        if (!preg_match('/^[\\p{L}\\s\'-]+$/u', $nombre)) {
+        if (!preg_match('/^[\p{L}\s\'-]+$/u', $nombre)) {
             echo json_encode(['success' => false, 'message' => 'El nombre solo puede contener letras y espacios']);
             break;
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            echo json_encode(['success' => false, 'message' => 'Ingresa un correo valido']);
+            echo json_encode(['success' => false, 'message' => 'Ingresa un correo válido']);
             break;
         }
 
         if (emailExists($conn, $email)) {
-            echo json_encode(['success' => false, 'message' => 'El correo ya esta registrado']);
+            echo json_encode(['success' => false, 'message' => 'El correo ya está registrado']);
             break;
         }
 
@@ -100,7 +110,7 @@ switch ($action) {
         if (!($hasUpper && $hasNumber && $hasSpecial && $hasMinLength)) {
             echo json_encode([
                 'success' => false,
-                'message' => 'La contrasena debe tener al menos 8 caracteres e incluir una mayuscula, un numero y un caracter especial',
+                'message' => 'La contraseña debe tener al menos 8 caracteres e incluir una mayúscula, un número y un carácter especial',
             ]);
             break;
         }
@@ -115,14 +125,14 @@ switch ($action) {
             }
         }
 
-        $stmt = $conn->prepare("INSERT INTO usuarios (nombre, email, password, rol, theme_preference) VALUES (?, ?, ?, 'cliente', 'light')");
+        $stmt = $conn->prepare("INSERT INTO usuarios (nombre, email, password, rol, theme_preference, language_preference) VALUES (?, ?, ?, 'cliente', 'light', 'es')");
         $stmt->bind_param('sss', $nombre, $email, $hashed);
 
         if (!$stmt->execute()) {
             if (isset($conn->errno) && $conn->errno === 1062) {
-                echo json_encode(['success' => false, 'message' => 'El correo ya esta registrado']);
+                echo json_encode(['success' => false, 'message' => 'El correo ya está registrado']);
             } else {
-                echo json_encode(['success' => false, 'message' => 'Error al registrar usuario']);
+                echo json_encode(['success' => false, 'message' => 'Error al registrar el usuario']);
             }
             break;
         }
@@ -143,6 +153,7 @@ switch ($action) {
                 'email' => $email,
                 'rol' => 'cliente',
                 'theme_preference' => 'light',
+                'language_preference' => 'es',
             ],
         ]);
         break;
@@ -150,7 +161,7 @@ switch ($action) {
     case 'logout':
         $_SESSION = [];
         session_destroy();
-        echo json_encode(['success' => true, 'message' => 'Sesion cerrada']);
+        echo json_encode(['success' => true, 'message' => 'Sesión cerrada']);
         break;
 
     case 'check':
@@ -179,6 +190,6 @@ switch ($action) {
         break;
 
     default:
-        echo json_encode(['success' => false, 'message' => 'Accion no valida']);
+        echo json_encode(['success' => false, 'message' => 'Acción no válida']);
 }
 ?>

@@ -1,4 +1,4 @@
-let isLogin = true
+﻿let isLogin = true
 
 async function checkEmailExists(email) {
   try {
@@ -6,7 +6,7 @@ async function checkEmailExists(email) {
     const data = await response.json()
     return data.success && data.exists
   } catch (error) {
-    console.log("[v0] Error checking email:", error)
+    console.log('Error verificando el correo:', error)
     return false
   }
 }
@@ -14,97 +14,96 @@ async function checkEmailExists(email) {
 function toggleMode(toLogin) {
   isLogin = toLogin
 
-  const nombreGroup = document.getElementById("nombre-group")
-  const formTitle = document.getElementById("form-title")
-  const submitBtn = document.getElementById("submit-btn")
-  const toggleText = document.getElementById("toggle-text")
-  const toggleLink = document.getElementById("toggle-link")
+  const nombreGroup = document.getElementById('nombre-group')
+  const formTitle = document.getElementById('form-title')
+  const submitBtn = document.getElementById('submit-btn')
+  const toggleText = document.getElementById('toggle-text')
+  const toggleLink = document.getElementById('toggle-link')
 
   if (isLogin) {
-    if (nombreGroup) nombreGroup.style.display = "none"
-    if (formTitle) formTitle.textContent = "Iniciar SesiÃ³n"
-    if (submitBtn) submitBtn.textContent = "Iniciar SesiÃ³n"
-    if (toggleText) toggleText.textContent = "Â¿No tienes cuenta?"
-    if (toggleLink) toggleLink.textContent = "RegÃ­strate"
+    if (nombreGroup) nombreGroup.style.display = 'none'
+    if (formTitle) formTitle.textContent = 'Iniciar Sesión'
+    if (submitBtn) submitBtn.textContent = 'Iniciar Sesión'
+    if (toggleText) toggleText.textContent = '¿No tienes cuenta?'
+    if (toggleLink) toggleLink.textContent = 'Regístrate'
   } else {
-    if (nombreGroup) nombreGroup.style.display = "block"
-    if (formTitle) formTitle.textContent = "Registrarse"
-    if (submitBtn) submitBtn.textContent = "Registrarse"
-    if (toggleText) toggleText.textContent = "Â¿Ya tienes cuenta?"
-    if (toggleLink) toggleLink.textContent = "Iniciar SesiÃ³n"
+    if (nombreGroup) nombreGroup.style.display = 'block'
+    if (formTitle) formTitle.textContent = 'Registrarse'
+    if (submitBtn) submitBtn.textContent = 'Registrarse'
+    if (toggleText) toggleText.textContent = '¿Ya tienes cuenta?'
+    if (toggleLink) toggleLink.textContent = 'Iniciar Sesión'
   }
 
-  const msg = document.getElementById("message")
-  if (msg) msg.textContent = ""
+  const msg = document.getElementById('message')
+  if (msg) msg.textContent = ''
 }
 
-document.getElementById("toggle-link").addEventListener("click", (e) => {
-  e.preventDefault()
+document.getElementById('toggle-link')?.addEventListener('click', (event) => {
+  event.preventDefault()
   toggleMode(!isLogin)
 })
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search)
-  if (urlParams.get("mode") === "register") {
+  if (urlParams.get('mode') === 'register') {
     toggleMode(false)
   }
 })
 
-document.getElementById("auth-form").addEventListener("submit", async (e) => {
-  e.preventDefault()
+document.getElementById('auth-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault()
 
-  const messageDiv = document.getElementById("message")
-  messageDiv.textContent = ""
-  messageDiv.style.color = "#ef4444"
+  const messageDiv = document.getElementById('message')
+  messageDiv.textContent = ''
+  messageDiv.style.color = '#ef4444'
 
   const formData = new FormData()
-  const email = document.getElementById("email").value.trim()
-  const password = document.getElementById("password").value
+  const email = document.getElementById('email').value.trim()
+  const password = document.getElementById('password').value
 
   if (!email && !password) {
-    messageDiv.textContent = "Debes ingresar correo y contraseÃ±a"
+    messageDiv.textContent = 'Debes ingresar correo y contraseña'
     return
   }
 
   if (!email) {
-    messageDiv.textContent = "Debes ingresar un correo electrÃ³nico"
+    messageDiv.textContent = 'Debes ingresar un correo electrónico'
     return
   }
 
-  // Validar formato bÃ¡sico de correo
-  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-  if (!emailValido) {
-    messageDiv.textContent = "Ingresa un correo vÃ¡lido"
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    messageDiv.textContent = 'Ingresa un correo válido'
     return
   }
 
   if (!password) {
-    messageDiv.textContent = "Debes ingresar una contraseÃ±a"
+    messageDiv.textContent = 'Debes ingresar una contraseña'
     return
   }
 
-  formData.append("email", email)
-  formData.append("password", password)
+  formData.append('email', email)
+  formData.append('password', password)
 
   if (!isLogin) {
-    const nombre = document.getElementById("nombre").value.trim()
+    const nombre = document.getElementById('nombre').value.trim()
 
     if (!nombre) {
-      messageDiv.style.color = "#ef4444"
-      messageDiv.textContent = "Debes ingresar tu nombre"
+      messageDiv.textContent = 'Debes ingresar tu nombre'
       return
     }
 
-    const nombreValido = /^[\\p{L}\\s'-]+$/u.test(nombre)
-    if (!nombreValido) {
-      messageDiv.style.color = "#ef4444"
-      messageDiv.textContent = "El nombre solo puede contener letras y espacios"
+    if (nombre.length > 60) {
+      messageDiv.textContent = 'El nombre no puede superar los 60 caracteres'
+      return
+    }
+
+    if (!/^[\p{L}\s'-]+$/u.test(nombre)) {
+      messageDiv.textContent = 'El nombre solo puede contener letras y espacios'
       return
     }
 
     if (await checkEmailExists(email)) {
-      messageDiv.style.color = "#ef4444"
-      messageDiv.textContent = "El correo ya esta registrado"
+      messageDiv.textContent = 'El correo ya está registrado'
       return
     }
 
@@ -114,59 +113,49 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
     const tieneAlMenos8 = password.length >= 8
 
     if (!(tieneMayuscula && tieneNumero && tieneEspecial && tieneAlMenos8)) {
-      messageDiv.style.color = "#ef4444"
-      messageDiv.textContent =
-        "La contraseÃ±a debe tener al menos 8 caracteres e incluir una mayÃºscula, un nÃºmero y un carÃ¡cter especial"
+      messageDiv.textContent = 'La contraseña debe tener al menos 8 caracteres e incluir una mayúscula, un número y un carácter especial'
       return
     }
 
-    formData.append("nombre", nombre)
+    formData.append('nombre', nombre)
   }
 
-  const action = isLogin ? "login" : "register"
+  const action = isLogin ? 'login' : 'register'
 
   try {
     const response = await fetch(`../controllers/auth.php?action=${action}`, {
-      method: "POST",
+      method: 'POST',
       body: formData,
     })
 
     const data = await response.json()
 
     if (data.success) {
-      messageDiv.style.color = "#22c55e"
+      messageDiv.style.color = '#22c55e'
       messageDiv.textContent = data.message
 
-      if (isLogin) {
-        setTimeout(() => {
-          const rolLower = String(data.user.rol).toLowerCase()
-          if (rolLower.startsWith("admin")) {
-            window.location.href = "admin.html"
-          } else {
-            window.location.href = "index.html"
-          }
-        }, 1000)
-      } else {
-        // Ya se iniciÃ³ sesiÃ³n en el backend tras registrar el usuario
-        setTimeout(() => {
-          window.location.href = "index.html"
-        }, 1000)
-      }
+      setTimeout(() => {
+        const rolLower = String(data.user.rol).toLowerCase()
+        if (rolLower.startsWith('admin')) {
+          window.location.href = 'admin.html'
+        } else {
+          window.location.href = 'index.html'
+        }
+      }, 900)
     } else {
-      messageDiv.style.color = "#ef4444"
+      messageDiv.style.color = '#ef4444'
       messageDiv.textContent = data.message
     }
   } catch (error) {
-    console.log("[v0] Error:", error)
-    document.getElementById("message").textContent = "Error de conexiÃ³n"
+    console.log('Error en autenticación:', error)
+    messageDiv.textContent = 'Error de conexión'
   }
 })
 
-// Alternar visibilidad de la contrasena
-const pwInput = document.getElementById("password")
-const showPw = document.getElementById("show-password-checkbox")
+const pwInput = document.getElementById('password')
+const showPw = document.getElementById('show-password-checkbox')
 if (showPw && pwInput) {
-  showPw.addEventListener("change", () => {
-    pwInput.type = showPw.checked ? "text" : "password"
+  showPw.addEventListener('change', () => {
+    pwInput.type = showPw.checked ? 'text' : 'password'
   })
 }

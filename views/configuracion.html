@@ -1,15 +1,15 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuracion - FerreSoft</title>
+    <title>Configuración - FerreSoft</title>
     <link rel="stylesheet" href="../public/css/styles.css">
 </head>
 <body>
     <header>
         <div class="navbar">
-            <h1>FerreSoft - Configuracion</h1>
+            <h1>FerreSoft - Configuración</h1>
             <div class="nav-links">
                 <a href="index.html" class="nav-link-light">Volver a la Tienda</a>
                 <div class="user-menu-wrapper">
@@ -28,12 +28,12 @@
 
     <main class="container">
         <div class="config-container">
-            <h2>Configuracion</h2>
+            <h2>Configuración</h2>
 
             <section class="config-section">
                 <h3>Preferencia de Tema</h3>
                 <div class="theme-switch-wrapper">
-                    <p>Elige el estilo visual de la pagina:</p>
+                    <p>Elige el estilo visual de la página:</p>
                     <div class="theme-options">
                         <label class="theme-option">
                             <input type="radio" name="theme" value="light" checked>
@@ -47,23 +47,37 @@
                 </div>
             </section>
 
-            <hr style="margin: 2rem 0; border: none; border-top: 1px solid #ddd;">
+            <hr class="section-divider">
+
+            <section class="config-section">
+                <h3>Idioma del Sistema</h3>
+                <div class="form-group">
+                    <label for="language">Idioma</label>
+                    <select id="language" name="language">
+                        <option value="es">Español</option>
+                        <option value="en">English</option>
+                    </select>
+                    <small class="admin-field-help">El idioma se guarda por usuario y se aplica al volver a iniciar sesión.</small>
+                </div>
+            </section>
+
+            <hr class="section-divider">
 
             <section class="config-section">
                 <h3>Seguridad</h3>
                 <form id="password-form">
                     <div class="form-group">
-                        <label for="new_password">Nueva Contrasena</label>
-                        <input type="password" id="new_password" name="new_password" placeholder="Minimo 8 caracteres" required>
-                        <small style="color: #666;">Debe incluir mayuscula, numero y caracter especial</small>
+                        <label for="new_password">Nueva Contraseña</label>
+                        <input type="password" id="new_password" name="new_password" placeholder="Mínimo 8 caracteres" required>
+                        <small style="color: #666;">Debe incluir mayúscula, número y carácter especial.</small>
                     </div>
                     <div class="form-group">
-                        <label for="confirm_password">Confirmar Contrasena</label>
-                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Repite la contrasena" required>
+                        <label for="confirm_password">Confirmar Contraseña</label>
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Repite la contraseña" required>
                     </div>
                     <div id="password-message" style="margin-top: 1rem; padding: 0.8rem; border-radius: 4px; display: none;"></div>
                     <div class="form-actions" style="margin-top: 1rem;">
-                        <button type="submit" class="btn btn-success">Actualizar Contrasena</button>
+                        <button type="submit" class="btn btn-success">Actualizar Contraseña</button>
                     </div>
                 </form>
             </section>

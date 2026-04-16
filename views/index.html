@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="../public/css/styles.css">
 </head>
 <body>
-    <!-- Encabezado actualizado con barra de navegación, info de usuario y carrito -->
     <header>
         <div class="navbar">
             <h1>FerreSoft - Tu Ferretería de Confianza</h1>
@@ -18,7 +17,7 @@
                         <circle cx="20" cy="21" r="1"></circle>
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                     </svg>
-                    <span class="cart-label">Carrito</span>
+                    <span class="cart-label" data-i18n="cart.button">Carrito</span>
                     <span class="cart-count" id="cart-count">0</span>
                 </button>
                 <div class="user-menu-wrapper">
@@ -27,13 +26,9 @@
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
-                        <span id="user-menu-name">Usuario</span>
+                        <span id="user-menu-name" data-i18n="menu.user">Usuario</span>
                     </button>
-                    <div id="user-menu" class="user-menu hidden">
-                        <a href="cuenta.html" class="menu-item">Mi Cuenta</a>
-                        <a href="#" class="menu-item" id="admin-panel-link" style="display: none;">Panel Admin</a>
-                        <a href="#" class="menu-item" id="logout-menu-link">Cerrar Sesión</a>
-                    </div>
+                    <div id="user-menu" class="user-menu hidden"></div>
                 </div>
             </div>
         </div>
@@ -41,15 +36,14 @@
 
     <main class="container">
         <section class="hero">
-            <h2>Bienvenidos a FerreSoft</h2>
-            <p>Las mejores herramientas para tus proyectos</p>
+            <h2 data-i18n="store.welcome">Bienvenidos a FerreSoft</h2>
+            <p data-i18n="store.subtitle">Las mejores herramientas para tus proyectos</p>
         </section>
 
         <section class="productos">
-            <h3>Nuestros Productos</h3>
-            <!-- Cambiado id de productos-lista a productos-container -->
+            <h3 data-i18n="store.products">Nuestros Productos</h3>
             <div id="productos-container" class="productos-grid">
-                <p class="loading">Cargando productos...</p>
+                <p class="loading" data-i18n="common.loading">Cargando...</p>
             </div>
         </section>
     </main>
@@ -57,28 +51,27 @@
     <div id="detalle-modal" class="modal">
         <div class="modal-content">
             <h2 id="detalle-nombre">Producto</h2>
-            <div class="product-image-wrapper" style="width:100%; height:300px; border: 1px solid #ddd; border-radius: 8px; margin: 0.5rem 0 1rem;">
-                <img id="detalle-imagen" src="" alt="" style="width:100%; height:100%; object-fit:contain; border-radius:8px;">
+            <div class="product-image-wrapper modal-image-box">
+                <img id="detalle-imagen" src="" alt="" class="modal-product-image">
             </div>
             <p id="detalle-descripcion"></p>
             <p class="precio" id="detalle-precio"></p>
             <p class="stock" id="detalle-stock"></p>
-            <div style="display:flex; gap:0.8rem; align-items:center; margin-top: 1rem;">
-                <input id="detalle-cantidad" type="number" min="1" value="1" class="qty-input" style="width:100px; padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
-                <button id="detalle-add-btn" class="btn btn-success">Agregar al Carrito</button>
-                <button type="button" class="btn" id="detalle-cerrar-btn">Cerrar</button>
+            <div class="modal-actions-row">
+                <input id="detalle-cantidad" type="number" min="1" value="1" class="qty-input modal-qty-input">
+                <button id="detalle-add-btn" class="btn btn-success" data-i18n="cart.add">Agregar al Carrito</button>
+                <button type="button" class="btn" id="detalle-cerrar-btn" data-i18n="common.close">Cerrar</button>
             </div>
         </div>
     </div>
 
-    <!-- modal personalizado para seleccionar cantidad en piezas -->
     <div id="cantidad-modal" class="modal">
         <div class="modal-content">
             <h2>Seleccionar cantidad</h2>
-            <input id="cantidad-input" type="number" min="1" value="1" style="width:100px; padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
+            <input id="cantidad-input" type="number" min="1" value="1" class="modal-qty-input">
             <div class="modal-actions" style="margin-top:1rem;">
                 <button id="cantidad-confirm-btn" class="btn btn-success">Aceptar</button>
-                <button id="cantidad-cancel-btn" class="btn">Cancelar</button>
+                <button id="cantidad-cancel-btn" class="btn" data-i18n="common.cancel">Cancelar</button>
             </div>
         </div>
     </div>
