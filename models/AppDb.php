@@ -63,6 +63,22 @@ function appEnsureTableCollation(mysqli $conn, string $table): void
     mysqli_query($conn, "ALTER TABLE `{$table}` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
 }
 
+function appGetNextExistingId(mysqli $conn, string $table): int
+{
+    $allowedTables = ['usuarios', 'productos'];
+    if (!in_array($table, $allowedTables, true) || !appTableExists($conn, $table)) {
+        return 1;
+    }
+
+    $result = mysqli_query($conn, "SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM `{$table}`");
+    if (!$result) {
+        return 1;
+    }
+
+    $row = mysqli_fetch_assoc($result);
+    return max(1, (int) ($row['next_id'] ?? 1));
+}
+
 function appEnsureUsuariosTable(mysqli $conn): void
 {
     mysqli_query($conn, "

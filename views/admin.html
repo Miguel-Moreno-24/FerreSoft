@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administracion - FerreSoft</title>
+    <title>Panel de Administración - FerreSoft</title>
     <link rel="stylesheet" href="../public/css/styles.css">
 </head>
 <body>
     <header class="admin-page-header">
         <div class="navbar admin-navbar">
-            <h1>Panel de Administracion - FerreSoft</h1>
+            <h1>Panel de Administración - FerreSoft</h1>
             <div class="nav-links">
                 <a href="index.html" class="nav-link-light admin-top-link">Ver Tienda</a>
                 <div class="user-menu-wrapper">
@@ -61,15 +61,14 @@
                     <div class="admin-section-card">
                         <div class="admin-section-heading">
                             <div>
-                                <h2>Gestion de Productos</h2>
-                                <p>Administra el catalogo manteniendo el orden por identificacion y acciones claras.</p>
+                                <h2>Gestión de Productos</h2>
+                                <p>Administra el catálogo manteniendo el orden por identificación y acciones claras.</p>
                             </div>
                         </div>
                         <div class="admin-toolbar">
                             <button class="btn btn-success admin-action-btn" onclick="openModal()">Agregar Producto</button>
-                            <button class="btn admin-action-btn admin-secondary-btn" onclick="resetCounters()">Reiniciar contadores</button>
                             <input type="text" id="productos-search" class="admin-search" placeholder="Buscar producto...">
-                            <button class="btn admin-action-btn admin-secondary-btn" id="toggle-order-btn" onclick="toggleRecentOrder()">Ver mas recientes</button>
+                            <button class="btn admin-action-btn admin-secondary-btn" id="toggle-order-btn" onclick="toggleRecentOrder()">Ver más recientes</button>
                         </div>
                         <div class="admin-table-container">
                             <table>
@@ -78,7 +77,7 @@
                                         <th>ID</th>
                                         <th>Imagen</th>
                                         <th>Nombre</th>
-                                        <th>Descripcion</th>
+                                        <th>Descripción</th>
                                         <th>Precio</th>
                                         <th>Stock</th>
                                         <th>Acciones</th>
@@ -100,8 +99,8 @@
                                 <p>Seguimiento del estado de compra y detalle por cliente.</p>
                             </div>
                         </div>
-                        <div class="admin-table-container">
-                            <table>
+                        <div class="admin-table-container admin-table-wide admin-table-pedidos">
+                            <table class="admin-data-table">
                                 <thead>
                                     <tr>
                                         <th>Pedido #</th>
@@ -128,8 +127,8 @@
                                 <p>Consulta usuarios registrados y controla accesos administrativos.</p>
                             </div>
                         </div>
-                        <div class="admin-table-container">
-                            <table>
+                        <div class="admin-table-container admin-table-wide admin-table-usuarios">
+                            <table class="admin-data-table">
                                 <thead>
                                     <tr>
                                         <th>ID</th>

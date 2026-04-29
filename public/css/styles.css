@@ -717,7 +717,7 @@ label {
 
 .admin-toolbar {
   display: grid;
-  grid-template-columns: repeat(4, auto);
+  grid-template-columns: auto minmax(240px, 1fr) auto;
   gap: 0.75rem;
   align-items: center;
   margin-bottom: 1rem;
@@ -767,6 +767,8 @@ label {
 
 .admin-table-container table {
   margin-top: 0;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .admin-table-container th {
@@ -776,10 +778,91 @@ label {
 .admin-table-container td,
 .admin-table-container th {
   vertical-align: middle;
+  padding: 0.95rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.admin-table-container td {
+  line-height: 1.45;
+}
+
+.admin-table-wide {
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--container-bg);
+}
+
+.admin-table-wide::-webkit-scrollbar {
+  height: 10px;
+}
+
+.admin-table-wide::-webkit-scrollbar-thumb {
+  background: #8ea1b2;
+  border-radius: 999px;
+}
+
+.admin-data-table {
+  min-width: 860px;
+}
+
+.admin-table-pedidos .admin-data-table {
+  min-width: 980px;
+}
+
+.admin-table-usuarios .admin-data-table {
+  min-width: 900px;
+}
+
+.admin-col-id,
+.admin-col-total,
+.admin-col-date,
+.admin-col-role,
+.admin-col-actions,
+.admin-col-status {
+  white-space: nowrap;
+}
+
+.admin-col-user {
+  min-width: 240px;
+}
+
+.admin-col-products {
+  min-width: 320px;
+  max-width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-col-email {
+  min-width: 260px;
+  max-width: 340px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-col-name {
+  min-width: 180px;
+}
+
+.admin-col-actions {
+  text-align: right;
+}
+
+.admin-table-container tbody tr:hover {
+  background: rgba(52, 152, 219, 0.05);
 }
 
 [data-theme="dark"] .admin-table-container th {
   background: #1c3348;
+}
+
+[data-theme="dark"] .admin-table-wide::-webkit-scrollbar-thumb {
+  background: #4f6a86;
 }
 
 /* Toasts */

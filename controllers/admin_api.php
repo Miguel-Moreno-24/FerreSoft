@@ -2,7 +2,7 @@
 session_start();
 require_once '../models/AppDb.php';
 
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 
 // Solo administradores
 if (!isset($_SESSION['user_rol']) || $_SESSION['user_rol'] !== 'admin') {
@@ -37,17 +37,17 @@ switch ($action) {
         break;
 
     case 'list_pedidos':
-        $sql = "SELECT p.id, p.numero_pedido, p.subtotal, p.total, p.estado, p.fecha_pedido, u.nombre as usuario_nombre, u.email as usuario_email 
-                FROM pedidos p 
-                INNER JOIN usuarios u ON p.usuario_id = u.id 
+        $sql = "SELECT p.id, p.numero_pedido, p.subtotal, p.total, p.estado, p.fecha_pedido, u.nombre as usuario_nombre, u.email as usuario_email
+                FROM pedidos p
+                INNER JOIN usuarios u ON p.usuario_id = u.id
                 ORDER BY p.fecha_pedido DESC";
         $res = mysqli_query($conn, $sql);
         $pedidos = [];
         while ($row = mysqli_fetch_assoc($res)) {
             $pedido_id = $row['id'];
             $sql_det = "SELECT d.cantidad, COALESCE(pr.nombre, d.producto_nombre) AS nombre
-                        FROM detalles_pedido d 
-                        LEFT JOIN productos pr ON d.producto_id = pr.id 
+                        FROM detalles_pedido d
+                        LEFT JOIN productos pr ON d.producto_id = pr.id
                         WHERE d.pedido_id = ?";
             $stmt = $conn->prepare($sql_det);
             $stmt->bind_param("i", $pedido_id);
